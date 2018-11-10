@@ -1,13 +1,20 @@
-import React, { Component } from 'react';
-import { Platform } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
 
-import Home from './src/components/Home'
+import HomeScreen from './src/components/screens/Home';
+import UserFormScreen from './src/components/screens/UserForm';
 
-type Props = {};
-export default class App extends Component<Props> {
-  render() {
-    return (
-      <Home/>
-    );
+const App = createStackNavigator(
+  {
+    Home: { screen: HomeScreen },
+    NewUser: { screen: UserFormScreen },
+  },
+  {
+    initialRouteName: 'Home',
+    headerStyle: {
+      backgroundColor: '#f4511e',
+    },
+    headerTintColor: '#000',
   }
-}
+);
+
+export default App;
