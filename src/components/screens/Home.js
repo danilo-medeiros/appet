@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import Button from '../appet/Button';
 import Theme from '../../theme/Theme';
 
-export default class HomeScreen extends React.Component {
+export default class Home extends React.Component {
   static navigationOptions = {
     headerTransparent: true,
   };
@@ -16,7 +16,7 @@ export default class HomeScreen extends React.Component {
         <Text style={styles.welcomeMessage}>Encontre o seu melhor amigo aqui!</Text>
         <View style={[{ width: "70%", margin: 5 }]}>
           <Button text='entrar' />
-          <Button text='cadastrar-se' onPress={() => this.props.navigation.navigate('NewUser')} />
+          <Button text='cadastrar-se' onPress={() => this.props.navigation.navigate('SignUp')} />
         </View>
       </View>
     );

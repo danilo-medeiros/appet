@@ -1,12 +1,12 @@
 import { createStackNavigator } from 'react-navigation';
 
-import HomeScreen from './src/components/screens/Home';
-import UserFormScreen from './src/components/screens/UserForm';
+import Home from './src/components/screens/Home';
+import SignUp from './src/components/screens/SignUp';
 
 const App = createStackNavigator(
   {
-    Home: { screen: HomeScreen },
-    NewUser: { screen: UserFormScreen },
+    Home: { screen: Home },
+    SignUp: { screen: SignUp },
   },
   {
     initialRouteName: 'Home',
