@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import t from 'tcomb-form-native';
-import { maybe, update } from 'tcomb';
+import { maybe } from 'tcomb';
 import Button from '../appet/Button';
 import Theme from '../../theme/Theme';
 import { UFS, MANDATORY_FIELD_MESSAGE, CEP_PATH, API_PATH } from '../../constants';
@@ -94,7 +94,6 @@ export default class SignUp extends Component {
   };
 
   handleSubmit = () => {
-    const value = this._form.getValue();
     sendUser(this.state.user);
   }
 
@@ -148,7 +147,7 @@ async function getCep(cep) {
 
 async function sendUser(user) {
   try {
-    let response = await fetch(`${API_PATH}/users`, {
+    let response = await fetch(`${API_PATH}/sign_up`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -162,7 +161,7 @@ async function sendUser(user) {
     return responseJson;
   } catch(error) {
     console.log(error);
-    alert('Ocorreu um erro');
+    alert('Ocorreu um erro ao realizar o cadastro');
   }
 }
 

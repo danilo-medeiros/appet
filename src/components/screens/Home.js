@@ -15,7 +15,7 @@ export default class Home extends React.Component {
         <Text style={styles.title}>Appet</Text>
         <Text style={styles.welcomeMessage}>Encontre o seu melhor amigo aqui!</Text>
         <View style={[{ width: "70%", margin: 5 }]}>
-          <Button text='entrar' />
+          <Button text='entrar' onPress={() => this.props.navigation.navigate('Login')} />
           <Button text='cadastrar-se' onPress={() => this.props.navigation.navigate('SignUp')} />
         </View>
       </View>
