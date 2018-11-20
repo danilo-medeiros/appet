@@ -29,3 +29,5 @@ export const UFS = {
   'SE': 'Sergipe',
   'TO': 'Tocantins',
 };
+
+export const MANDATORY_FIELD_MESSAGE = 'Campo obrigatório';

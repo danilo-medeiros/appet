@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 
 import t from 'tcomb-form-native';
-import { maybe } from 'tcomb';
+import { maybe, update } from 'tcomb';
 import Button from '../appet/Button';
 import Theme from '../../theme/Theme';
-import { UFS, MANDATORY_FIELD_MESSAGE } from '../../constants';
+import { UFS, MANDATORY_FIELD_MESSAGE, CEP_PATH, API_PATH } from '../../constants';
 
 const Form = t.form.Form;
 
@@ -94,19 +94,23 @@ export default class SignUp extends Component {
   };
 
   handleSubmit = () => {
-    const value = this._form.getValue(); // use that ref to get the form value
-    console.log('value: ', value);
+    const value = this._form.getValue();
+    sendUser(this.state.user);
   }
 
-  onChange = () => {
-
+  onChange = (user) => {
+    const cep = new Cep(user.cep);
+    if (cep.canReload(this.state.user.cep)) {
+      getCep(user.cep).then((cepDetails) => this.setState({ user: { ...user, ...cepDetails } }));
+    }
+    this.setState({ user: { ...user } });
   }
 
   render() {
     return (
       <ScrollView style={styles.container}>
         <View style={styles.form}>
-          <Form ref={c => this._form = c} type={User} options={options} onChange={this.onChange} />
+          <Form ref={c => this._form = c} type={User} value={this.state.user} options={options} onChange={this.onChange} />
           <Button
             text="Cadastrar-se"
             onPress={this.handleSubmit}
@@ -126,3 +130,56 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   }
 });
+
+async function getCep(cep) {
+  try {
+    let response = await fetch(`${CEP_PATH}/${cep}/json`);
+    let responseJson = await response.json();
+    return {
+      uf: responseJson.uf,
+      cep: responseJson.cep.replace(/-/g, ''),
+      district: responseJson.bairro,
+      city: responseJson.localidade,
+    };
+  } catch (error) {
+    alert('Ocorreu um erro');
+  }
+}
+
+async function sendUser(user) {
+  try {
+    let response = await fetch(`${API_PATH}/users`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: user,
+      }),
+    });
+    let responseJson = await response.json();
+    return responseJson;
+  } catch(error) {
+    console.log(error);
+    alert('Ocorreu um erro');
+  }
+}
+
+class Cep {
+  constructor(cep) {
+    this.cep = cep;
+  }
+
+  isValid() {
+    return this.cep !== null && this.cep !== undefined && this.cep.length === 8;
+  }
+
+  equals(cep) {
+    return this.cep === cep;
+  }
+
+  canReload(cep) {
+    return this.isValid() && !this.equals(cep);
+  }
+}
