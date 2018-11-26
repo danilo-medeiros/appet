@@ -94,7 +94,10 @@ export default class SignUp extends Component {
   };
 
   handleSubmit = () => {
-    sendUser(this.state.user);
+    var value = this._form.getValue();
+    if (value) {
+      sendUser(this.state.user);
+    }
   }
 
   onChange = (user) => {
@@ -107,16 +110,18 @@ export default class SignUp extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.form}>
-          <Form ref={c => this._form = c} type={User} value={this.state.user} options={options} onChange={this.onChange} />
-          <Button
-            text="Cadastrar-se"
-            onPress={this.handleSubmit}
-          />
-        </View>
-      </ScrollView>
-    )
+      <View style={{ flex: 1 }}>
+        <ScrollView style={styles.container}>
+          <View style={styles.form}>
+            <Form ref={c => this._form = c} type={User} value={this.state.user} options={options} onChange={this.onChange} />
+          </View>
+        </ScrollView>
+        <Button
+          text="Cadastrar-se"
+          onPress={this.handleSubmit}
+        />
+      </View>
+    );
   }
 }
 
@@ -159,7 +164,7 @@ async function sendUser(user) {
     });
     let responseJson = await response.json();
     return responseJson;
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     alert('Ocorreu um erro ao realizar o cadastro');
   }

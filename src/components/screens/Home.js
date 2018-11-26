@@ -15,8 +15,12 @@ export default class Home extends React.Component {
         <Text style={styles.title}>Appet</Text>
         <Text style={styles.welcomeMessage}>Encontre o seu melhor amigo aqui!</Text>
         <View style={[{ width: "70%", margin: 5 }]}>
-          <Button text='entrar' onPress={() => this.props.navigation.navigate('Login')} />
-          <Button text='cadastrar-se' onPress={() => this.props.navigation.navigate('SignUp')} />
+          <View style={styles.buttonView}>
+            <Button style={styles.button} text='entrar' onPress={() => this.props.navigation.navigate('Login')} />
+          </View>
+          <View style={styles.buttonView}>
+            <Button style={styles.button} text='cadastrar-se' onPress={() => this.props.navigation.navigate('SignUp')} />
+          </View>
         </View>
       </View>
     );
@@ -38,6 +42,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: Theme.COLORS[0],
+  },
+  buttonView: {
+    marginVertical: 5,
   },
   welcomeMessage: {
     fontSize: 15,

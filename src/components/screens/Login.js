@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
 import t from 'tcomb-form-native';
 import Button from '../appet/Button';
@@ -47,7 +47,10 @@ export default class Login extends React.Component {
   };
 
   handleSubmit = () => {
-    sendCredentials(this.state.credentials);
+    var value = this._form.getValue();
+    if (value) {
+      sendCredentials(this.state.credentials);
+    }
   }
 
   onChange = (credentials) => {
@@ -56,9 +59,11 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Form ref={c => this._form = c} options={options} type={Credentials}
-          value={this.state.credentials} onChange={this.onChange} />
+      <View style={{ flex: 1 }}>
+        <ScrollView style={styles.container}>
+          <Form ref={c => this._form = c} options={options} type={Credentials}
+            value={this.state.credentials} onChange={this.onChange} />
+        </ScrollView>
         <Button
           text="Entrar"
           onPress={this.handleSubmit}
@@ -70,9 +75,6 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    
     padding: 20,
     backgroundColor: '#fff',
   },
