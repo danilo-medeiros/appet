@@ -43,6 +43,12 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSAppTransportSecurity</key>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Appet Você gostaria e acessar sua galeria de imagens?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Appet Você gostaria de usar sua câmera?</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Appet Você gostaria de salvar fotos em sua galeria?</string>
 	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
 	<dict>
     <key>NSAllowsArbitraryLoads</key>
