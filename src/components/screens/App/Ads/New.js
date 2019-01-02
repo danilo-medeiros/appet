@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 
 import t from 'tcomb-form-native';
-import Button from '../appet/Button';
-import { UFS, MANDATORY_FIELD_MESSAGE } from '../../constants';
-import Theme from '../../theme/Theme';
-import PickImage from '../widgets/PickImage';
+import Button from '../../../appet/Button';
+import { UFS, MANDATORY_FIELD_MESSAGE } from '../../../../constants';
+import PickImage from '../../../widgets/PickImage';
 
 const Form = t.form.Form;
 
@@ -18,16 +17,16 @@ const PetType = t.enums({
 }, 'PetType');
 
 const SizeType = t.enums({
-  'sm': 'Pequeno (Apartamento)',
-  'md': 'Médio (Casa)',
-  'lg': 'Grande (Quintal)',
-  'xg': 'Muito grande (Campo)',
+  'P': 'P',
+  'M': 'M',
+  'G': 'G',
+  'GG': 'GG',
 }, 'SizeType');
 
 const Uf = t.enums(UFS, 'Uf');
 
 const Ad = t.struct({
-  petName: t.String,
+  petName: t.maybe(t.String),
   petType: PetType,
   description: t.maybe(t.String),
   aproxAge: t.Number,
@@ -60,7 +59,7 @@ const options = {
       multiline: true,
     },
     aproxAge: {
-      label: 'Idade aprox. em anos',
+      label: 'Idade aprox. em meses',
     },
     weight: {
       label: 'Peso aprox.',
@@ -102,14 +101,6 @@ class NewAd extends Component {
     }
   }
 
-  static navigationOptions = {
-    headerTitle: 'Novo anúncio',
-    headerStyle: {
-      backgroundColor: Theme.COLORS[2],
-    },
-    headerTintColor: Theme.COLORS[5],
-  }
-
   onImagePicked = image => {
     this.setState(prevState => {
       return {
@@ -128,9 +119,9 @@ class NewAd extends Component {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
+          <PickImage onImagePicked={this.onImagePicked} />
           <View style={styles.form}>
             <Form ref={c => this._form = c} type={Ad} value={this.state.ad} options={options} />
-            <PickImage onImagePicked={this.onImagePicked} />
           </View>
         </ScrollView>
         <Button text='Confirmar' />
@@ -140,11 +131,8 @@ class NewAd extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFF',
-    padding: 20,
-  },
   form: {
+    padding: 20,
     marginBottom: 30,
   }
 });

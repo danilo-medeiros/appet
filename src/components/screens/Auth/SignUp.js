@@ -3,23 +3,31 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 
 import t from 'tcomb-form-native';
 import { maybe } from 'tcomb';
-import Button from '../appet/Button';
-import Theme from '../../theme/Theme';
-import { UFS, MANDATORY_FIELD_MESSAGE, CEP_PATH, API_PATH } from '../../constants';
+import Button from '../../appet/Button';
+import { UFS, MANDATORY_FIELD_MESSAGE, CEP_PATH, API_PATH } from '../../../constants';
 
 const Form = t.form.Form;
 
 const Uf = t.enums(UFS, 'Uf');
 
 const User = t.struct({
-  name: t.String,
+  /* name: t.String,
   email: t.String,
   phoneNumber: t.String,
   birthDate: t.Date,
   cep: maybe(t.String),
   district: t.String,
   uf: Uf,
-  city: t.String,
+  city: t.String, */
+
+  name: t.String,
+  email: t.String,
+  phoneNumber: maybe(t.String),
+  birthDate: maybe(t.Date),
+  cep: maybe(t.String),
+  district: maybe(t.String),
+  uf: maybe(Uf),
+  city: maybe(t.String),
 });
 
 const options = {
@@ -85,25 +93,22 @@ export default class SignUp extends Component {
     }
   }
 
-  static navigationOptions = {
-    headerTitle: 'Novo cadastro',
-    headerStyle: {
-      backgroundColor: Theme.COLORS[2],
-    },
-    headerTintColor: Theme.COLORS[5],
-  };
-
   handleSubmit = () => {
     var value = this._form.getValue();
     if (value) {
-      sendUser(this.state.user);
+      // sendUser(this.state.user);
+      console.log(this.state.user);
     }
   }
 
   onChange = (user) => {
     const cep = new Cep(user.cep);
     if (cep.canReload(this.state.user.cep)) {
-      getCep(user.cep).then((cepDetails) => this.setState({ user: { ...user, ...cepDetails } }));
+      getCep(user.cep)
+        .then((cepDetails) => this.setState({
+          user: { ...user, ...cepDetails },
+        }),
+      );
     }
     this.setState({ user: { ...user } });
   }

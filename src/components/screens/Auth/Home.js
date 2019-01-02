@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import Button from '../appet/Button';
-import Theme from '../../theme/Theme';
+import Button from '../../appet/Button';
+import Theme from '../../../theme/Theme';
 
 export default class Home extends React.Component {
   static navigationOptions = {
@@ -11,15 +11,15 @@ export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image source={require('./../../assets/dog.png')} style={styles.icon} />
+        <Image source={require('./../../../assets/dog.png')} style={styles.icon} />
         <Text style={styles.title}>Appet</Text>
         <Text style={styles.welcomeMessage}>Encontre o seu melhor amigo aqui!</Text>
-        <View style={[{ width: "70%", margin: 5 }]}>
-          <View style={styles.buttonView}>
-            <Button style={styles.button} text='entrar' onPress={() => this.props.navigation.navigate('Login')} />
-          </View>
+        <View style={styles.buttonsContainer}>
           <View style={styles.buttonView}>
             <Button style={styles.button} text='cadastrar-se' onPress={() => this.props.navigation.navigate('SignUp')} />
+          </View>
+          <View style={styles.buttonView}>
+            <Button text='entrar' onPress={() => this.props.navigation.navigate('App')} />
           </View>
         </View>
       </View>
@@ -42,6 +42,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: Theme.COLORS[0],
+  },
+  buttonsContainer: {
+    width: "70%",
+    margin: 5,
   },
   buttonView: {
     marginVertical: 5,

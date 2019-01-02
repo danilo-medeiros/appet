@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 import t from 'tcomb-form-native';
-import Button from '../appet/Button';
-import Theme from '../../theme/Theme';
-import { MANDATORY_FIELD_MESSAGE } from '../../constants';
+import Button from '../../appet/Button';
+import Theme from '../../../theme/Theme';
+import { MANDATORY_FIELD_MESSAGE } from '../../../constants';
 
 const Form = t.form.Form;
 
@@ -38,36 +38,42 @@ export default class Login extends React.Component {
     };
   }
 
-  static navigationOptions = {
-    headerTitle: 'Entrar no aplicativo',
-    headerStyle: {
-      backgroundColor: Theme.COLORS[2],
-    },
-    headerTintColor: Theme.COLORS[5],
-  };
-
   handleSubmit = () => {
     var value = this._form.getValue();
     if (value) {
-      sendCredentials(this.state.credentials);
+      this.setState({
+        credentials: value,
+      });
+      console.log(this.state);
+      this.props.navigation.navigate('Ads');
     }
-  }
-
-  onChange = (credentials) => {
-    this.setState({ credentials: credentials });
   }
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <ScrollView style={styles.container}>
+      <View style={{ flex: 1, backgroundColor: Theme.COLORS[5] }}>
+        <View style={{ padding: 20, }}>
           <Form ref={c => this._form = c} options={options} type={Credentials}
-            value={this.state.credentials} onChange={this.onChange} />
-        </ScrollView>
-        <Button
-          text="Entrar"
-          onPress={this.handleSubmit}
+            value={this.state.credentials} />
+          <Button
+            text="Entrar"
+            onPress={this.handleSubmit}
+          />
+        </View>
+        <View
+          style={{
+            borderBottomColor: 'gray',
+            borderBottomWidth: 1,
+            marginTop: 10,
+          }}
         />
+        <Text style={{ textAlign: 'center' }}>ou</Text>
+        <View style={{ padding: 20 }}>
+          <Button
+            text="Criar conta com e-mail"
+            onPress={() => this.props.navigation.navigate('SignUp')}
+          />
+        </View>
       </View>
     );
   }
@@ -85,7 +91,7 @@ const styles = StyleSheet.create({
 
 async function sendCredentials(credentials) {
   try {
-    let response = await fetch(`${API_PATH}/login`, {
+    const response = await fetch(`${API_PATH}/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -95,9 +101,9 @@ async function sendCredentials(credentials) {
         credentials: credentials,
       }),
     });
-    let responseJson = await response.json();
+    const responseJson = await response.json();
     return responseJson;
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     alert('Ocorreu um erro ao realizar a autenticação');
   }

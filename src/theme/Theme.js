@@ -1,5 +1,5 @@
 export default class Theme {
   static COLORS = [
-    '#3D3522', '#4A442D', '#386150', '#58B09C', '#CAF7E2', '#EFF7F3',
+    '#00CECB', '#FFED66', '#FF5E5B', '#5C80BC', '#DEE5E5', '#FFF',
   ];
 }
