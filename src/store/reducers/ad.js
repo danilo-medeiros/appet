@@ -19,7 +19,6 @@ const initialState = {
       img: 'https://picsum.photos/200/200/?random',
     },
   ],
-  selectedAd: null,
 };
 
 const adsReducer = (state = initialState, action) => {
@@ -42,24 +41,6 @@ const adsReducer = (state = initialState, action) => {
           }
           return ad;
         })
-      };
-    case SELECT_AD:
-      return {
-        ...state,
-        selectedAd: state.ads.find(ad => ad.key === action.adKey),
-      };
-    case DESELECT_AD:
-      return {
-        ...state,
-        selectedAd: null,
-      };
-    case DELETE_AD:
-      return {
-        ...state,
-        ads: state.ads.filter(ad => {
-          return ad.key !== action.adKey;
-        }),
-        selectedAd: null,
       };
     default:
       return state;

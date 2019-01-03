@@ -10,10 +10,10 @@ class ListAds extends Component {
 
   constructor(props) {
     super(props);
+    console.log('Fetching data!');
   }
 
   onAdSelectedHandler(item) {
-    // this.props.onSelectAd(key);
     this.props.navigation.navigate('ShowAd', { item });
   }
 
