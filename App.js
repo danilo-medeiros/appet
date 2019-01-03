@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, StyleSheet, ScrollView, View, Image } from 'react-native'
+import { Text, StyleSheet, ScrollView, View, Image, TouchableOpacity } from 'react-native'
 
 import {
   createStackNavigator,
@@ -17,6 +17,7 @@ import Theme from './src/theme/Theme';
 import { DrawerItems, SafeAreaView } from 'react-navigation';
 import ListAds from './src/components/screens/App/Ads/List';
 import NewAd from './src/components/screens/App/Ads/New';
+import AdDetails from './src/components/screens/App/Ads/Details';
 
 const CustomDrawerContentComponent = (props) => (
   <ScrollView>
@@ -67,9 +68,10 @@ const AuthNavigator = createStackNavigator(
     },
     Login: {
       screen: Login,
-      navigationOptions: {
+      navigationOptions: ({ navigation }) => ({
         title: 'Entrar no appet',
-      },
+        headerLeft: DrawerIcon(navigation),
+      }),
     },
   },
   {
@@ -84,6 +86,14 @@ const AuthNavigator = createStackNavigator(
   }
 );
 
+const DrawerIcon = (navigation) => {
+  return (
+    <TouchableOpacity onPress={() => navigation.openDrawer()}>
+      <Icon name="bars" style={{ padding: 10, marginLeft: 10 }} size={20} color='white' />
+    </TouchableOpacity>
+  );
+}
+
 const AppNavigator = createDrawerNavigator(
   {
     Ads: {
@@ -91,14 +101,21 @@ const AppNavigator = createDrawerNavigator(
         {
           ListAds: {
             screen: ListAds,
-            navigationOptions: {
+            navigationOptions: ({ navigation }) => ({
               title: 'Anúncios',
-            },
+              headerLeft: DrawerIcon(navigation),
+            }),
           },
           AdsNew: {
             screen: NewAd,
             navigationOptions: {
               title: 'Novo anúncio',
+            },
+          },
+          ShowAd: {
+            screen: AdDetails,
+            navigationOptions: {
+              title: 'Detalhes do anúncio',
             },
           }
         },
@@ -115,7 +132,6 @@ const AppNavigator = createDrawerNavigator(
       navigationOptions: {
         title: 'Anúncios',
         drawerIcon: () => (<Icon name="paw" size={25} />),
-        headerLeft: <Text onPress={() => navigation.navigate('DrawerOpen')}>Menu</Text>,
       },
     },
     Profile: {
