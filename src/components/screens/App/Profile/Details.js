@@ -1,31 +1,30 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
+import { ScrollView, View, Text, StyleSheet, Alert } from 'react-native';
 import Theme from '../../../../theme/Theme';
 import Button from '../../../appet/Button';
+import Login from '../../Auth/Login';
+import { unsetCurrentUser } from '../../../../store/actions';
 
-export default class Profile extends Component {
+class ProfileDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      profile: {
-        name: 'Danilo dos Santos Medeiros',
-        email: 'danilomedeiros03@gmail.com',
-        phoneNumber: '84992120696',
-        birthdate: '1997-05-02',
-        state: 'MA',
-        city: 'São Luiz',
-        neighborhood: 'Centro',
-      },
-    };
   }
 
-  render() {
+  logout() {
+    Alert.alert('Sair do appet?', 'Você tem certeza que deseja sair do aplicativo?', [
+      { text: 'Cancelar' },
+      { text: 'Sim', onPress: () => this.props.onLogout() },
+    ])
+  }
+
+  renderProfile() {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
           <View style={styles.usernameContainer}>
-            <Text style={styles.username}>{this.state.profile.name}</Text>
-            <Text style={styles.detailsText}>{this.state.profile.email}</Text>
+            <Text style={styles.username}>{this.props.currentUser.name}</Text>
+            <Text style={styles.detailsText}>{this.props.currentUser.email}</Text>
           </View>
           <View style={{ padding: 10 }}>
             <View style={{ paddingBottom: 10 }}>
@@ -34,10 +33,24 @@ export default class Profile extends Component {
             <View style={{ paddingBottom: 10 }}>
               <Button text="Atualizar dados" onPress={() => this.props.navigation.navigate('ProfileEdit')} />
             </View>
+            <View style={{ paddingBottom: 10 }}>
+              <Button text="Sair" onPress={() => this.logout()} />
+            </View>
           </View>
         </ScrollView>
       </View>
     );
+  }
+
+  renderLogin() {
+    return (<Login navigation={this.props.navigation} />);
+  }
+
+  render() {
+    if (this.props.currentUser) {
+      return this.renderProfile();
+    }
+    return this.renderLogin();
   }
 }
 
@@ -75,3 +88,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 });
+
+const mapStateToProps = (state) => ({
+  currentUser: state.users.currentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLogout: () => dispatch(unsetCurrentUser()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileDetails);

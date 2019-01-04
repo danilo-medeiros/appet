@@ -6,6 +6,10 @@ import Theme from '../../theme/Theme';
 
 export default class AdsList extends Component {
 
+  constructor(props) {
+    super(props);
+  }
+
   renderSeparator = () => (
     <View style={styles.separator}></View>
   )
@@ -24,7 +28,7 @@ export default class AdsList extends Component {
                 {ad.city}, {ad.state}
               </Text>
               <Text style={{ fontSize: 14, color: 'gray' }}>
-                {ad.datetime}
+                {ad.createdAt}
               </Text>
             </View>
           </View>

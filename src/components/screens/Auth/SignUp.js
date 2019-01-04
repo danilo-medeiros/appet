@@ -1,33 +1,26 @@
 import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 
 import t from 'tcomb-form-native';
 import { maybe } from 'tcomb';
 import Button from '../../appet/Button';
 import { UFS, MANDATORY_FIELD_MESSAGE, CEP_PATH, API_PATH } from '../../../constants';
+import { setCurrentUser } from '../../../store/actions';
+import { fetchPostalCodeAddress, isPostalCodeValid } from '../../../helpers/PostalCode';
 
 const Form = t.form.Form;
 
 const Uf = t.enums(UFS, 'Uf');
 
 const User = t.struct({
-  /* name: t.String,
-  email: t.String,
-  phoneNumber: t.String,
-  birthDate: t.Date,
-  cep: maybe(t.String),
-  district: t.String,
-  uf: Uf,
-  city: t.String, */
-
   name: t.String,
   email: t.String,
-  phoneNumber: maybe(t.String),
-  birthDate: maybe(t.Date),
-  cep: maybe(t.String),
-  district: maybe(t.String),
-  uf: maybe(Uf),
-  city: maybe(t.String),
+  phoneNumber: t.String,
+  postalCode: maybe(t.String),
+  neighborhood: t.String,
+  state: Uf,
+  city: t.String,
 });
 
 const options = {
@@ -54,22 +47,16 @@ const options = {
       maxLength: 11,
       keyboardType: 'number-pad',
     },
-    birthDate: {
-      label: 'Data de nascimento',
-      error: MANDATORY_FIELD_MESSAGE,
-      mode: 'date',
-      defaultValueText: 'Selecione uma data',
-    },
-    cep: {
+    postalCode: {
       label: 'CEP',
       maxLength: 8,
       keyboardType: 'number-pad',
     },
-    uf: {
+    state: {
       label: 'Estado',
       error: MANDATORY_FIELD_MESSAGE,
     },
-    district: {
+    neighborhood: {
       label: 'Bairro',
       error: MANDATORY_FIELD_MESSAGE,
       maxLength: 30,
@@ -84,33 +71,55 @@ const options = {
   },
 };
 
-export default class SignUp extends Component {
+class SignUp extends Component {
+
+  state = {
+    user: null,
+    postalCode: null,
+  };
 
   constructor(props) {
     super(props);
-    this.state = {
-      user: {},
-    }
+    console.log(props);
   }
 
   handleSubmit = () => {
     var value = this._form.getValue();
     if (value) {
-      // sendUser(this.state.user);
-      console.log(this.state.user);
+      const user = {
+        ...value,
+        id: Math.round(Math.random() * 100),
+      }
+      this.props.onSave(user);
+      this.navigation.navigate('Profile');
     }
   }
 
-  onChange = (user) => {
-    const cep = new Cep(user.cep);
-    if (cep.canReload(this.state.user.cep)) {
-      getCep(user.cep)
-        .then((cepDetails) => this.setState({
-          user: { ...user, ...cepDetails },
-        }),
-      );
+  updatePostalCode(newPostalCode) {
+    if (newPostalCode !== this.state.postalCode && isPostalCodeValid(newPostalCode)) {
+      fetchPostalCodeAddress(newPostalCode).then(address => {
+        console.log(address);
+        this.setState({
+          user: {
+            ...this.state.user,
+            ...address,
+          },
+          postalCode: newPostalCode,
+        });
+      }).catch(() => {
+        this.setState({
+          user: {
+            ...this.state.user,
+            ...{ state: null, neighborhood: null, city: null },
+          },
+          postalCode: null,
+        });
+      });
     }
-    this.setState({ user: { ...user } });
+  }
+
+  onChange(user) {
+    this.updatePostalCode(user.postalCode);
   }
 
   render() {
@@ -118,7 +127,7 @@ export default class SignUp extends Component {
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
           <View style={styles.form}>
-            <Form ref={c => this._form = c} type={User} value={this.state.user} options={options} onChange={this.onChange} />
+            <Form ref={c => this._form = c} type={User} value={this.state.user} options={options} onChange={this.onChange.bind(this)} />
           </View>
         </ScrollView>
         <Button
@@ -173,6 +182,7 @@ async function sendUser(user) {
     console.log(error);
     alert('Ocorreu um erro ao realizar o cadastro');
   }
+  fetchPostalCodeAddress
 }
 
 class Cep {
@@ -192,3 +202,13 @@ class Cep {
     return this.isValid() && !this.equals(cep);
   }
 }
+
+const mapStateToProps = (state) => ({
+
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onSave: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

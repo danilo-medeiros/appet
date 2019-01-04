@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
 
 import t from 'tcomb-form-native';
 import Button from '../../../appet/Button';
 import { UFS, MANDATORY_FIELD_MESSAGE } from '../../../../constants';
 import PickImage from '../../../widgets/PickImage';
+import { insertAd } from '../../../../store/actions';
 
 const Form = t.form.Form;
 
@@ -17,25 +19,26 @@ const PetType = t.enums({
 }, 'PetType');
 
 const SizeType = t.enums({
-  'P': 'P',
-  'M': 'M',
-  'G': 'G',
-  'GG': 'GG',
+  'p': 'P',
+  'm': 'M',
+  'g': 'G',
+  'gg': 'GG',
 }, 'SizeType');
 
 const Uf = t.enums(UFS, 'Uf');
 
 const Ad = t.struct({
+  title: t.String,
   petName: t.maybe(t.String),
   petType: PetType,
-  description: t.maybe(t.String),
-  aproxAge: t.Number,
+  description: t.String,
+  aproxAge: t.maybe(t.Number),
   weight: t.maybe(t.Number),
-  sizeType: SizeType,
+  size: SizeType,
   cep: t.maybe(t.String),
-  district: t.String,
-  uf: Uf,
+  neighborhood: t.String,
   city: t.String,
+  state: Uf,
 });
 
 const options = {
@@ -44,6 +47,11 @@ const options = {
     optional: ' (opcional)',
   },
   fields: {
+    title: {
+      label: 'Título do anúncio',
+      maxLength: 30,
+      autoCapitalize: 'words',
+    },
     petName: {
       label: 'Nome do pet',
       maxLength: 40,
@@ -56,6 +64,7 @@ const options = {
     description: {
       label: 'Descrição',
       maxLength: 100,
+      numberOfLines: 5,
       multiline: true,
     },
     aproxAge: {
@@ -64,7 +73,7 @@ const options = {
     weight: {
       label: 'Peso aprox.',
     },
-    sizeType: {
+    size: {
       label: 'Tamanho',
     },
     cep: {
@@ -72,11 +81,7 @@ const options = {
       maxLength: 8,
       keyboardType: 'number-pad',
     },
-    uf: {
-      label: 'Estado',
-      error: MANDATORY_FIELD_MESSAGE,
-    },
-    district: {
+    neighborhood: {
       label: 'Bairro',
       error: MANDATORY_FIELD_MESSAGE,
       maxLength: 30,
@@ -88,43 +93,50 @@ const options = {
       maxLength: 30,
       autoCapitalize: 'words',
     },
+    state: {
+      label: 'Estado',
+      error: MANDATORY_FIELD_MESSAGE,
+    },
   },
 }
 
 class NewAd extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ad: {
-        image: null,
-      },
-    }
+
+  state = {
+    ad: null,
+    image: null,
   }
 
-  onImagePicked = image => {
-    this.setState(prevState => {
-      return {
-        ad: {
-          ...prevState.ad,
-          image: {
-            value: image,
-            valid: true,
-          }
-        }
-      }
-    })
+  constructor(props) {
+    super(props);
+  }
+
+  onImagePicked(image) {
+    this.setState(prevState => ({
+      ...prevState,
+      image,
+    }));
+  }
+
+  handleSubmit() {
+    const value = this._form.getValue();
+    if (value) {
+      const user = { ...value, user: this.props.currentUser };
+      this.props.onSave(user);
+      this.props.navigation.navigate('ShowAd', { item: user });
+    }
   }
 
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView style={styles.container}>
+        <ScrollView>
           <PickImage onImagePicked={this.onImagePicked} />
           <View style={styles.form}>
-            <Form ref={c => this._form = c} type={Ad} value={this.state.ad} options={options} />
+            <Form ref={c => this._form = c} type={Ad} value={this.state.user} options={options} />
           </View>
         </ScrollView>
-        <Button text='Confirmar' />
+        <Button text='Confirmar' onPress={() => this.handleSubmit()} />
       </View>
     );
   }
@@ -134,7 +146,18 @@ const styles = StyleSheet.create({
   form: {
     padding: 20,
     marginBottom: 30,
+  },
+  description: {
+    height: 200,
   }
 });
 
-export default NewAd;
+const mapStateToProps = (state) => ({
+  currentUser: state.users.currentUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onSave: (ad) => dispatch(insertAd(ad)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewAd);

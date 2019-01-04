@@ -118,7 +118,17 @@ class AdDetails extends Component {
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.description}>{ad.phone_number}</Text>
+              <Text style={styles.description}>{ad.user.phoneNumber}</Text>
+            </ItemWrapper>
+
+            <Separator />
+
+            <ItemWrapper>
+              <Text style={styles.sectionTitle}>Anunciado por</Text>
+            </ItemWrapper>
+
+            <ItemWrapper>
+              <Text style={styles.description}>{ad.user.name.split(' ')[0]}</Text>
             </ItemWrapper>
           </View>
         </ScrollView>

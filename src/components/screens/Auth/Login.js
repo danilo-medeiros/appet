@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
+import { connect } from 'react-redux';
 
 import t from 'tcomb-form-native';
 import Button from '../../appet/Button';
 import Theme from '../../../theme/Theme';
 import { MANDATORY_FIELD_MESSAGE } from '../../../constants';
+import { setCurrentUser } from '../../../store/actions';
 
 const Form = t.form.Form;
 
@@ -30,31 +32,26 @@ const options = {
   }
 }
 
-export default class Login extends React.Component {
+class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      credentials: {},
-    };
+    const navigatorRoute = this.props.navigation.getParam('nextRoute');
+    this.nextRoute = navigatorRoute ? navigatorRoute : 'Ads';
   }
 
   handleSubmit = () => {
-    var value = this._form.getValue();
+    const value = this._form.getValue();
     if (value) {
-      this.setState({
-        credentials: value,
-      });
-      console.log(this.state);
-      this.props.navigation.navigate('Ads');
+      this.props.onAuthenticate(value);
+      this.props.navigation.navigate(this.nextRoute);
     }
   }
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: Theme.COLORS[5] }}>
+      <View style={styles.container}>
         <View style={{ padding: 20, }}>
-          <Form ref={c => this._form = c} options={options} type={Credentials}
-            value={this.state.credentials} />
+          <Form ref={c => this._form = c} options={options} type={Credentials} />
           <Button
             text="Entrar"
             onPress={this.handleSubmit}
@@ -81,8 +78,7 @@ export default class Login extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#fff',
+    flex: 1, backgroundColor: Theme.COLORS[5]
   },
   form: {
     marginBottom: 30,
@@ -108,3 +104,11 @@ async function sendCredentials(credentials) {
     alert('Ocorreu um erro ao realizar a autenticação');
   }
 }
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  onAuthenticate: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

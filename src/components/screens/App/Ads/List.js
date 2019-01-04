@@ -4,17 +4,24 @@ import { connect } from 'react-redux';
 
 import Button from '../../../appet/Button';
 import AdsList from '../../../appet/AdsList';
-import { selectAd } from '../../../../store/actions/ads';
+import { selectAd } from '../../../../store/actions';
 
 class ListAds extends Component {
 
   constructor(props) {
     super(props);
-    console.log('Fetching data!');
   }
 
   onAdSelectedHandler(item) {
     this.props.navigation.navigate('ShowAd', { item });
+  }
+
+  navigateToAdForm = () => {
+    if (this.props.currentUser) {
+      this.props.navigation.navigate('AdsNew');
+    } else {
+      this.props.navigation.navigate('Profile', { nextRoute: 'AdsNew' });
+    }
   }
 
   render() {
@@ -23,7 +30,7 @@ class ListAds extends Component {
         <AdsList ads={this.props.ads} onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)} />
         <Button
           text="Cadastrar anúncio"
-          onPress={() => this.props.navigation.navigate('AdsNew')}
+          onPress={this.navigateToAdForm}
         />
       </View>
     );
@@ -36,7 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({ ads: state.ads.ads });
+const mapStateToProps = state => ({ ads: state.ads.ads, currentUser: state.users.currentUser });
 
 const mapDispatchToProps = dispatch => ({ onSelectAd: (key) => dispatch(selectAd(key)) });
 

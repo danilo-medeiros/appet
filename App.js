@@ -4,20 +4,18 @@ import { Text, StyleSheet, ScrollView, View, Image, TouchableOpacity } from 'rea
 import {
   createStackNavigator,
   createDrawerNavigator,
-  createSwitchNavigator,
 } from 'react-navigation';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import SignUp from './src/components/screens/Auth/SignUp';
-import Login from './src/components/screens/Auth/Login';
-import Profile from './src/components/screens/App/Profile/Profile';
 import Theme from './src/theme/Theme';
 
 import { DrawerItems, SafeAreaView } from 'react-navigation';
 import ListAds from './src/components/screens/App/Ads/List';
 import NewAd from './src/components/screens/App/Ads/New';
 import AdDetails from './src/components/screens/App/Ads/Details';
+import ProfileDetails from './src/components/screens/App/Profile/Details';
 
 const CustomDrawerContentComponent = (props) => (
   <ScrollView>
@@ -66,16 +64,16 @@ const AuthNavigator = createStackNavigator(
         title: 'Novo cadastro',
       },
     },
-    Login: {
-      screen: Login,
+    Profile: {
+      screen: ProfileDetails,
       navigationOptions: ({ navigation }) => ({
-        title: 'Entrar no appet',
+        title: 'Minha conta',
         headerLeft: DrawerIcon(navigation),
       }),
-    },
+    }
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'Profile',
     headerTintColor: '#000',
     navigationOptions: {
       headerStyle: {
@@ -94,7 +92,7 @@ const DrawerIcon = (navigation) => {
   );
 }
 
-const AppNavigator = createDrawerNavigator(
+const App = createDrawerNavigator(
   {
     Ads: {
       screen: createStackNavigator(
@@ -141,28 +139,11 @@ const AppNavigator = createDrawerNavigator(
         drawerIcon: () => (<Icon name="user" size={25} />),
       },
     },
-    /* Profile2: {
-      screen: Profile,
-      navigationOptions: {
-        title: 'Minha conta',
-        drawerIcon: () => (<Icon name="user" size={25} />),
-      },
-    }, */
   },
   {
     initialRouteName: 'Ads',
     contentComponent: CustomDrawerContentComponent,
   },
-);
-
-const App = createSwitchNavigator(
-  {
-    App: AppNavigator,
-    Auth: AuthNavigator,
-  },
-  {
-    initialRouteName: 'App',
-  }
 );
 
 export default App;
