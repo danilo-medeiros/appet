@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Button from '../appet/Button';
 
 export default class PickImage extends Component {
 

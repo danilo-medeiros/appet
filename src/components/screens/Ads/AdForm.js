@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-
 import t from 'tcomb-form-native';
-import Button from '../../../appet/Button';
-import { UFS, MANDATORY_FIELD_MESSAGE } from '../../../../constants';
-import PickImage from '../../../widgets/PickImage';
-import { insertAd } from '../../../../store/actions';
+
+import { Button, PickImage } from '../../widgets';
+import { UFS, MANDATORY_FIELD_MESSAGE } from '../../../constants';
+import { insertAd } from '../../../store/actions';
 
 const Form = t.form.Form;
 
@@ -100,7 +99,7 @@ const options = {
   },
 }
 
-class NewAd extends Component {
+class AdForm extends Component {
 
   state = {
     ad: null,
@@ -160,4 +159,4 @@ const mapDispatchToProps = (dispatch) => ({
   onSave: (ad) => dispatch(insertAd(ad)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewAd);
+export default connect(mapStateToProps, mapDispatchToProps)(AdForm);

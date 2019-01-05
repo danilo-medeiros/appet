@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FlatList, Image, Text, TouchableHighlight, StyleSheet, View, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Theme from '../../theme/Theme';
+import COLORS from '../../theme/Colors';
 
 export default class AdsList extends Component {
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     paddingLeft: 5,
-    backgroundColor: Theme.COLORS[5],
+    backgroundColor: COLORS[5],
   },
   listItemImage: {
     width: 100,

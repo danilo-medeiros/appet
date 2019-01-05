@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet, TouchableHighlight, Text } from 'react-native';
-import Theme from '../../theme/Theme';
+import COLORS from '../../theme/Colors';
 
 export default Button = (props) => (
   <TouchableHighlight
     style={styles.button}
     onPress={props.onPress}
-    underlayColor={Theme.COLORS[1]}>
+    underlayColor={COLORS[1]}>
     <Text style={styles.text}>{props.text.toUpperCase()}</Text>
   </TouchableHighlight>
 );
@@ -14,11 +14,11 @@ export default Button = (props) => (
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 15,
-    backgroundColor: Theme.COLORS[2],
+    backgroundColor: COLORS[2],
     elevation: 4,
   },
   text: {
-    color: Theme.COLORS[5],
+    color: COLORS[5],
     fontWeight: 'bold',
     textAlign:'center',
   }

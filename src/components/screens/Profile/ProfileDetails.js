@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { ScrollView, View, Text, StyleSheet, Alert } from 'react-native';
-import Theme from '../../../../theme/Theme';
-import Button from '../../../appet/Button';
-import Login from '../../Auth/Login';
-import { unsetCurrentUser } from '../../../../store/actions';
+import { connect } from 'react-redux';
+
+import { Button } from '../../widgets';
+import { Login } from '../Profile';
+
+import COLORS from '../../../theme/Colors';
+
+import { unsetCurrentUser } from '../../../store/actions';
 
 class ProfileDetails extends Component {
   constructor(props) {
@@ -31,7 +34,7 @@ class ProfileDetails extends Component {
               <Button text="Meus anúncios" onPress={() => this.props.navigation.navigate('ProfileAds')} />
             </View>
             <View style={{ paddingBottom: 10 }}>
-              <Button text="Atualizar dados" onPress={() => this.props.navigation.navigate('ProfileEdit')} />
+              <Button text="Atualizar dados" onPress={() => this.props.navigation.navigate('EditProfile')} />
             </View>
             <View style={{ paddingBottom: 10 }}>
               <Button text="Sair" onPress={() => this.logout()} />
@@ -57,17 +60,17 @@ class ProfileDetails extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.COLORS[5],
+    backgroundColor: COLORS[5],
   },
   usernameContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    backgroundColor: Theme.COLORS[3],
+    backgroundColor: COLORS[2],
     padding: 20,
   },
   username: {
-    color: Theme.COLORS[5],
+    color: COLORS[5],
     fontWeight: 'bold',
     fontSize: 18,
   },
@@ -81,7 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   action: {
-    color: Theme.COLORS[2],
+    color: COLORS[2],
     fontWeight: 'bold',
     fontSize: 18,
     marginTop: 20,

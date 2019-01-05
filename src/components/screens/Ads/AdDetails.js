@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import Communications from 'react-native-communications';
 
-import Button from '../../../appet/Button';
+import { Button } from '../../widgets';
 
 const PET_TYPES = {
   dog: 'Cachorro',

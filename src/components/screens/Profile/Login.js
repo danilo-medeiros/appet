@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
-
 import t from 'tcomb-form-native';
-import Button from '../../appet/Button';
-import Theme from '../../../theme/Theme';
+
+import { Button } from '../../widgets';
 import { MANDATORY_FIELD_MESSAGE } from '../../../constants';
+import COLORS from '../../../theme/Colors';
+
 import { setCurrentUser } from '../../../store/actions';
 
 const Form = t.form.Form;
@@ -78,7 +79,7 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, backgroundColor: Theme.COLORS[5]
+    flex: 1, backgroundColor: COLORS[5]
   },
   form: {
     marginBottom: 30,

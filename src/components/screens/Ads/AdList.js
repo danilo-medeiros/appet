@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
-import Button from '../../../appet/Button';
-import AdsList from '../../../appet/AdsList';
-import { selectAd } from '../../../../store/actions';
+import { Button, AdsList } from '../../widgets';
+import { selectAd } from '../../../store/actions';
 
-class ListAds extends Component {
+class AdList extends Component {
 
   constructor(props) {
     super(props);
@@ -18,9 +17,9 @@ class ListAds extends Component {
 
   navigateToAdForm = () => {
     if (this.props.currentUser) {
-      this.props.navigation.navigate('AdsNew');
+      this.props.navigation.navigate('NewAd');
     } else {
-      this.props.navigation.navigate('Profile', { nextRoute: 'AdsNew' });
+      this.props.navigation.navigate('ProfileDetails', { nextRoute: 'NewAd' });
     }
   }
 
@@ -47,4 +46,4 @@ const mapStateToProps = state => ({ ads: state.ads.ads, currentUser: state.users
 
 const mapDispatchToProps = dispatch => ({ onSelectAd: (key) => dispatch(selectAd(key)) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListAds);
+export default connect(mapStateToProps, mapDispatchToProps)(AdList);
