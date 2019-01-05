@@ -58,14 +58,7 @@ class Login extends Component {
             onPress={this.handleSubmit}
           />
         </View>
-        <View
-          style={{
-            borderBottomColor: 'gray',
-            borderBottomWidth: 1,
-            marginTop: 10,
-          }}
-        />
-        <Text style={{ textAlign: 'center' }}>ou</Text>
+        <Text style={styles.or}>ou</Text>
         <View style={{ padding: 20 }}>
           <Button
             text="Criar conta com e-mail"
@@ -79,10 +72,16 @@ class Login extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, backgroundColor: COLORS[5]
+    flex: 1,
+    backgroundColor: COLORS[5]
   },
   form: {
     marginBottom: 30,
+  },
+  or: {
+    textAlign: 'center',
+    color: '#000',
+    fontSize: 17,
   }
 });
 

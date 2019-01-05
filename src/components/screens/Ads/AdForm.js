@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Switch, Text } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
 import { Button, PickImage } from '../../widgets';
+
 import { UFS, MANDATORY_FIELD_MESSAGE } from '../../../constants';
+
 import { insertAd } from '../../../store/actions';
 
 const Form = t.form.Form;
@@ -26,21 +28,25 @@ const SizeType = t.enums({
 
 const Uf = t.enums(UFS, 'Uf');
 
-const Ad = t.struct({
-  title: t.String,
-  petName: t.maybe(t.String),
-  petType: PetType,
-  description: t.String,
-  aproxAge: t.maybe(t.Number),
-  weight: t.maybe(t.Number),
-  size: SizeType,
-  cep: t.maybe(t.String),
-  neighborhood: t.String,
-  city: t.String,
-  state: Uf,
-});
+const Ad = {
+  data: t.struct({
+    title: t.String,
+    petName: t.maybe(t.String),
+    petType: PetType,
+    description: t.String,
+    aproxAge: t.maybe(t.Number),
+    weight: t.maybe(t.Number),
+    size: SizeType,
+  }),
+  address: t.struct({
+    cep: t.maybe(t.String),
+    neighborhood: t.String,
+    city: t.String,
+    state: Uf,
+  }),
+};
 
-const options = {
+const dataOptions = {
   i18n: {
     ...Form.i18n,
     optional: ' (opcional)',
@@ -75,6 +81,15 @@ const options = {
     size: {
       label: 'Tamanho',
     },
+  },
+};
+
+const addressOptions = {
+  i18n: {
+    ...Form.i18n,
+    optional: ' (opcional)',
+  },
+  fields: {
     cep: {
       label: 'CEP',
       maxLength: 8,
@@ -97,12 +112,16 @@ const options = {
       error: MANDATORY_FIELD_MESSAGE,
     },
   },
-}
+};
 
 class AdForm extends Component {
 
   state = {
-    ad: null,
+    ad: {
+      data: null,
+      address: null,
+    },
+    sameAddressOfUser: false,
     image: null,
   }
 
@@ -118,11 +137,31 @@ class AdForm extends Component {
   }
 
   handleSubmit() {
-    const value = this._form.getValue();
+    const adData = this._form.getValue();
+    const address = this._form1.getValue();
+    if (adData && address) {
+      const ad = { ...adData, ...address, user: this.props.currentUser };
+      this.props.onSave(ad);
+      this.props.navigation.navigate('ShowAd', { item: ad });
+    }
+  }
+
+  onAddressModeValueChange(value) {
     if (value) {
-      const user = { ...value, user: this.props.currentUser };
-      this.props.onSave(user);
-      this.props.navigation.navigate('ShowAd', { item: user });
+      this.state = {
+        ...this.state,
+        sameAddressOfUser: true,
+        address: {
+          neighborhood: this.props.currentUser.neighborhood,
+          city: this.props.currentUser.city,
+          state: this.props.currentUser.state,
+        },
+      };
+    } else {
+      this.state = {
+        ...this.state,
+        sameAddressOfUser: false,
+      }
     }
   }
 
@@ -132,7 +171,25 @@ class AdForm extends Component {
         <ScrollView>
           <PickImage onImagePicked={this.onImagePicked} />
           <View style={styles.form}>
-            <Form ref={c => this._form = c} type={Ad} value={this.state.user} options={options} />
+            <Form ref={c => this._form = c}
+              type={Ad.data}
+              value={this.state.ad.data}
+              options={dataOptions}
+            />
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.address}>Usar seu endereço?</Text>
+              <Switch
+                onValueChange={(value) => this.onAddressModeValueChange(value) }
+                value={this.state.sameAddressOfUser}
+              />
+            </View>
+
+            <Form ref={c => this._form1 = c}
+              type={Ad.address}
+              value={this.state.ad.address}
+              options={addressOptions}
+            />
           </View>
         </ScrollView>
         <Button text='Confirmar' onPress={() => this.handleSubmit()} />
@@ -148,6 +205,17 @@ const styles = StyleSheet.create({
   },
   description: {
     height: 200,
+  },
+  switchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+  },
+  address: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#000',
   }
 });
 
