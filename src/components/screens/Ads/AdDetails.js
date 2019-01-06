@@ -118,7 +118,7 @@ class AdDetails extends Component {
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.description}>{ad.user.phoneNumber}</Text>
+              <Text style={styles.description}>{ad.user.phone_number}</Text>
             </ItemWrapper>
 
             <Separator />

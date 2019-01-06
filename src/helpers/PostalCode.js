@@ -1,12 +1,12 @@
 import { CEP_PATH } from "../constants";
 
-export async function fetchPostalCodeAddress(postalCode) {
+const fetchPostalCodeAddress = async function(postalCode) {
   try {
-    const response = await fetch(`${CEP_PATH}/${postalCode}/json`);
+    const response = await fetch(`${CEP_PATH}${postalCode}/json`);
     const responseJson = await response.json();
     return {
       state: responseJson.uf,
-      postalCode: responseJson.cep.replace(/-/g, ''),
+      postal_code: responseJson.cep.replace(/-/g, ''),
       neighborhood: responseJson.bairro,
       city: responseJson.localidade,
     };
@@ -15,6 +15,8 @@ export async function fetchPostalCodeAddress(postalCode) {
   }
 }
 
-export function isPostalCodeValid(postalCode) {
+const isPostalCodeValid = function(postalCode) {
   return postalCode !== null && postalCode !== undefined && postalCode.length === 8;
 }
+
+export { fetchPostalCodeAddress, isPostalCodeValid };

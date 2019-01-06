@@ -1,0 +1,1 @@
+export { sendCredentials, register, signUp } from './Profile';

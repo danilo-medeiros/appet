@@ -1,25 +1,54 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { UserForm } from '../../widgets';
+import { UserForm, UserPassword } from '../../widgets';
 
 import { setCurrentUser } from '../../../store/actions';
+import { signUp } from '../../../api';
 
 class SignUp extends Component {
 
-  handleSubmit(value) {
-    const user = {
-      ...value,
-      id: Math.round(Math.random() * 100),
+  state = {
+    currentForm: 1,
+    user: null,
+  };
+
+  async saveUser() {
+    try {
+      const createdUser = await signUp(this.state.user);
+      console.log(createdUser);
+      this.props.onSave(createdUser);
+      this.props.navigation.navigate('ProfileDetails');
+    } catch (error) {
+      alert(error.message);
     }
-    this.props.onSave(user);
-    this.props.navigation.navigate('ProfileDetails');
+  }
+
+  handleUserSubmit(user) {
+    this.setState({
+      currentForm: 2,
+      user,
+    });
+  }
+
+  handlePasswordSubmit(passwordData) {
+    this.setState({
+      ...this.state,
+      user: {
+        ...this.state.user,
+        password: passwordData.password,
+      },
+    });
+    this.saveUser();
   }
 
   render() {
-    return (
-      <UserForm currentUser={this.props.currentUser} onSubmit={(value) => this.handleSubmit(value)} />
-    );
+    if (this.state.currentForm === 1) {
+      return (<UserForm onSubmit={(user) => this.handleUserSubmit(user)} />);
+    }
+    if (this.state.currentForm === 2) {
+      return (<UserPassword onSubmit={(passwordData) => this.handlePasswordSubmit(passwordData)} />);
+    }
   }
 }
 

@@ -15,8 +15,8 @@ const Uf = t.enums(UFS, 'Uf');
 const User = t.struct({
   name: t.String,
   email: t.String,
-  phoneNumber: t.String,
-  postalCode: maybe(t.String),
+  phone_number: t.String,
+  postal_code: maybe(t.String),
   neighborhood: t.String,
   state: Uf,
   city: t.String,
@@ -40,13 +40,13 @@ const options = {
       maxLength: 40,
       keyboardType: 'email-address',
     },
-    phoneNumber: {
+    phone_number: {
       label: 'Número do celular',
       error: MANDATORY_FIELD_MESSAGE,
       maxLength: 11,
       keyboardType: 'number-pad',
     },
-    postalCode: {
+    postal_code: {
       label: 'CEP',
       maxLength: 8,
       keyboardType: 'number-pad',
@@ -88,7 +88,7 @@ class UserForm extends Component {
   }
 
   updatePostalCode(user) {
-    const newPostalCode = user.postalCode;
+    const newPostalCode = user.postal_code;
     if (newPostalCode !== this.state.postalCode && isPostalCodeValid(newPostalCode)) {
       fetchPostalCodeAddress(newPostalCode).then(address => {
         if (address) {
@@ -133,7 +133,7 @@ class UserForm extends Component {
           </View>
         </ScrollView>
         <Button
-          text={this.props.isEditionMode ? 'Atualizar' : 'Cadastrar-se'}
+          text={this.props.isEditionMode ? 'Atualizar' : 'Próximo'}
           onPress={() => this.handleSubmit()}
         />
       </View>

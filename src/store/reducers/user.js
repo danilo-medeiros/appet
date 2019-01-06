@@ -1,7 +1,14 @@
-import { SET_CURRENT_USER, UNSET_CURRENT_USER, UPDATE_CURRENT_USER } from "../actions/actionTypes";
+import {
+  SET_CURRENT_USER,
+  UNSET_CURRENT_USER,
+  UPDATE_CURRENT_USER,
+  CLEAN_AUTH_DATA,
+  SET_TOKEN,
+} from "../actions/actionTypes";
 
 const initialState = {
   currentUser: null,
+  token: null,
 }
 
 const userReducer = (state = initialState, action) => {
@@ -24,6 +31,15 @@ const userReducer = (state = initialState, action) => {
           ...action.currentUser,
         },
       }
+    case CLEAN_AUTH_DATA:
+      return {
+        ...initialState,
+      };
+    case SET_TOKEN:
+      return {
+        ...state,
+        token: action.token,
+      };
     default:
       return state;
   }

@@ -7,7 +7,9 @@ import { Button } from '../../widgets';
 import { MANDATORY_FIELD_MESSAGE } from '../../../constants';
 import COLORS from '../../../theme/Colors';
 
-import { setCurrentUser } from '../../../store/actions';
+import { setCurrentUser, setToken } from '../../../store/actions';
+import { sendCredentials, register } from '../../../api';
+import { storeData } from '../../../helpers';
 
 const Form = t.form.Form;
 
@@ -40,11 +42,28 @@ class Login extends Component {
     this.nextRoute = navigatorRoute ? navigatorRoute : 'Ads';
   }
 
+  onAuthenticationFinished(user) {
+    // this.props.onAuthenticate(token);
+    this.props.onRegister(user);
+    this.props.navigation.navigate(this.nextRoute);
+  } 
+
+  async authenticate(credentials) {
+    try {
+      const authResponse = await sendCredentials(credentials);
+      const registerResponse = await register(authResponse.token);
+      /* await storeData('currentUser', registerResponse);
+      await storeData('token', authResponse.token); */
+      this.onAuthenticationFinished(registerResponse);
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
   handleSubmit = () => {
     const value = this._form.getValue();
     if (value) {
-      this.props.onAuthenticate(value);
-      this.props.navigation.navigate(this.nextRoute);
+      this.authenticate(value);
     }
   }
 
@@ -85,30 +104,11 @@ const styles = StyleSheet.create({
   }
 });
 
-async function sendCredentials(credentials) {
-  try {
-    const response = await fetch(`${API_PATH}/login`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        credentials: credentials,
-      }),
-    });
-    const responseJson = await response.json();
-    return responseJson;
-  } catch (error) {
-    console.log(error);
-    alert('Ocorreu um erro ao realizar a autenticação');
-  }
-}
-
 const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-  onAuthenticate: (user) => dispatch(setCurrentUser(user)),
+  onRegister: (user) => dispatch(setCurrentUser(user)),
+  onAuthenticate: (token) => dispatch(setToken(token)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
