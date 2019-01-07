@@ -2,17 +2,17 @@ import {
   SET_CURRENT_USER,
   UNSET_CURRENT_USER,
   UPDATE_CURRENT_USER,
-  CLEAN_AUTH_DATA,
-  SET_TOKEN
 } from "./actionTypes";
 import { sendCredentials, register, signUp } from "../../api";
 import { uiStartLoading, uiStopLoading } from "./ui";
+import { storeData, getData, removeData } from "../../helpers/Storage";
 
 export const login = (credentials) => {
   return dispatch => {
     dispatch(uiStartLoading());
     sendCredentials(credentials)
-      .then(authResponse => register(authResponse.token))
+      .then(authResponse => storeData('token', authResponse.token))
+      .then(token => register(token))
       .then(registerResponse => {
         dispatch(uiStopLoading());
         dispatch(setCurrentUser(registerResponse));
@@ -40,17 +40,20 @@ export const insertUser = (user) => {
   };
 }
 
-export const setCurrentUser = (currentUser) => {
+export const getCurrentUser = () => {
+  return dispatch => {
+    getData('token')
+      .then(token => register(token))
+      .then(registerResponse => dispatch(setCurrentUser(registerResponse)))
+      .catch(error => alert(error.message));
+  };
+};
+
+const setCurrentUser = (currentUser) => {
   return {
     currentUser,
     type: SET_CURRENT_USER,
   }
-};
-
-export const unsetCurrentUser = () => {
-  return {
-    type: UNSET_CURRENT_USER,
-  };
 };
 
 export const updateCurrentUser = (currentUser) => {
@@ -60,15 +63,16 @@ export const updateCurrentUser = (currentUser) => {
   };
 };
 
-export const cleanAuthData = () => {
+const unsetCurrentUser = () => {
   return {
-    type: CLEAN_AUTH_DATA,
+    type: UNSET_CURRENT_USER,
   };
 };
 
-export const setToken = (token) => {
-  return {
-    token,
-    type: SET_TOKEN,
-  };
-};
+export const deleteToken = () => {
+  return dispatch => {
+    removeData('token')
+      .then(() => dispatch(unsetCurrentUser()))
+      .catch(error => alert(error.message));
+  }
+}

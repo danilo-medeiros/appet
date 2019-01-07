@@ -1,17 +1,66 @@
-import { INSERT_AD, UPDATE_AD, SELECT_AD, DELETE_AD, DESELECT_AD } from "./actionTypes";
+import { SELECT_AD, DELETE_AD, DESELECT_AD, SET_ADS } from "./actionTypes";
+import { uiStartLoading, uiStopLoading } from "./ui";
+import { getAds, saveAd } from "../../api";
+import { uploadImage } from "../../api/Ad";
 
-export const insertAd = (ad) => {
-  return {
-    ad,
-    type: INSERT_AD,
-  }
+export const updateAd = (ad, onAdUpdated) => {
+  return dispatch => {
+    dispatch(uiStartLoading());
+    saveAd(ad, 'POST')
+      .then(() => {
+        dispatch(fetchAds({currentPage: 1}));
+        dispatch(uiStopLoading());
+        if (onAdInserted) {
+          onAdUpdated();
+        }
+      })
+      .catch(error => {
+        alert(error.message);
+        dispatch(uiStopLoading());
+      });
+  };
 };
 
-export const updateAd = (ad) => {
+export const insertAd = (ad, image, onAdInserted) => {
+  return dispatch => {
+    dispatch(uiStartLoading());
+    saveAd(ad, 'POST')
+      .then(ad => uploadImage(ad.id, image))
+      .then(() => {
+        dispatch(fetchAds({currentPage: 1}));
+        dispatch(uiStopLoading());
+        if (onAdInserted) {
+          onAdInserted();
+        }
+      })
+      .catch(error => {
+        alert(error.message);
+        dispatch(uiStopLoading());
+      });
+  };
+};
+
+export const fetchAds = (options) => {
+  return dispatch => {
+    dispatch(uiStartLoading());
+    getAds(options)
+      .then(res => {
+        dispatch(setAds(res.ads ? res.ads : [], res._pagination.current_page));
+        dispatch(uiStopLoading());
+      })
+      .catch(error => {
+        alert(error.message);
+        dispatch(uiStopLoading());
+      });
+  };
+}
+
+export const setAds = (ads, currentPage) => {
   return {
-    ad,
-    type: UPDATE_AD,
-  }
+    ads,
+    currentPage,
+    type: SET_ADS,
+  };
 };
 
 export const selectAd = (key) => {

@@ -6,6 +6,7 @@ import { CustomDrawerContent } from './src/components/widgets';
 import { AdNavigator, ProfileNavigator } from './src/navigators';
 
 GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;
+global.FormData = global.originalFormData
 
 const App = createDrawerNavigator({
   Ads: {

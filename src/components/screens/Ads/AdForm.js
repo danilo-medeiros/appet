@@ -31,10 +31,10 @@ const Uf = t.enums(UFS, 'Uf');
 const Ad = {
   data: t.struct({
     title: t.String,
-    petName: t.maybe(t.String),
-    petType: PetType,
+    pet_name: t.maybe(t.String),
+    pet_type: PetType,
     description: t.String,
-    aproxAge: t.maybe(t.Number),
+    aprox_age: t.maybe(t.Number),
     weight: t.maybe(t.Number),
     size: SizeType,
   }),
@@ -57,12 +57,12 @@ const dataOptions = {
       maxLength: 30,
       autoCapitalize: 'words',
     },
-    petName: {
+    pet_name: {
       label: 'Nome do pet',
       maxLength: 40,
       autoCapitalize: 'words',
     },
-    petType: {
+    pet_type: {
       label: 'Tipo de pet',
       error: MANDATORY_FIELD_MESSAGE
     },
@@ -72,7 +72,7 @@ const dataOptions = {
       numberOfLines: 5,
       multiline: true,
     },
-    aproxAge: {
+    aprox_age: {
       label: 'Idade aprox. em meses',
     },
     weight: {
@@ -130,19 +130,24 @@ class AdForm extends Component {
   }
 
   onImagePicked(image) {
-    this.setState(prevState => ({
-      ...prevState,
+    this.setState({
+      ...this.state,
       image,
-    }));
+    });
   }
 
   handleSubmit() {
     const adData = this._form.getValue();
     const address = this._form1.getValue();
+
+    if (!this.state.image) {
+      alert('Por favor, anexe uma imagem!');
+      return;
+    }
+
     if (adData && address) {
-      const ad = { ...adData, ...address, user: this.props.currentUser };
-      this.props.onSave(ad);
-      this.props.navigation.navigate('ShowAd', { item: ad });
+      const ad = { ...adData, ...address };
+      this.props.onSave(ad, this.state.image, () => this.props.navigation.navigate('AdList'));
     }
   }
 
@@ -169,7 +174,7 @@ class AdForm extends Component {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView>
-          <PickImage onImagePicked={this.onImagePicked} />
+          <PickImage onImagePicked={(image) => this.onImagePicked(image)} />
           <View style={styles.form}>
             <Form ref={c => this._form = c}
               type={Ad.data}
@@ -224,7 +229,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onSave: (ad) => dispatch(insertAd(ad)),
+  onSave: (ad, image, onAdInserted) => dispatch(insertAd(ad, image, onAdInserted)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdForm);

@@ -7,7 +7,7 @@ import { Login } from '../Profile';
 
 import COLORS from '../../../theme/Colors';
 
-import { unsetCurrentUser } from '../../../store/actions';
+import { deleteToken } from '../../../store/actions';
 
 class ProfileDetails extends Component {
   constructor(props) {
@@ -97,7 +97,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onLogout: () => dispatch(unsetCurrentUser()),
+  onLogout: () => dispatch(deleteToken()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileDetails);

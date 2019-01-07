@@ -1,21 +1,38 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Button, AdsList } from '../../widgets';
-import { selectAd } from '../../../store/actions';
+import { fetchAds } from '../../../store/actions/ads';
+import { getCurrentUser } from '../../../store/actions';
+import { getData } from '../../../helpers';
 
 class AdList extends Component {
 
   constructor(props) {
     super(props);
+    
+    if (!this.props.currentUser) {
+      this.getCurrentUser();
+    }
+
+    if (this.props.ads.length === 0) {
+      this.props.fetchAds({currentPage: 1});
+    }
+  }
+
+  async getCurrentUser() {
+    const token = await getData('token');
+    if (token) {
+      this.props.getCurrentUser();
+    }
   }
 
   onAdSelectedHandler(item) {
     this.props.navigation.navigate('ShowAd', { item });
   }
 
-  navigateToAdForm = () => {
+  navigateToAdForm() {
     if (this.props.currentUser) {
       this.props.navigation.navigate('NewAd');
     } else {
@@ -23,13 +40,22 @@ class AdList extends Component {
     }
   }
 
+  renderList() {
+    if (this.props.isLoading) {
+      return (<Text>Carregando...</Text>);
+    }
+    return (<AdsList ads={this.props.ads}
+      onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)}
+    />);
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <AdsList ads={this.props.ads} onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)} />
+        {this.renderList()}
         <Button
-          text="Cadastrar anúncio"
-          onPress={this.navigateToAdForm}
+          text='Cadastrar anúncio'
+          onPress={() => this.navigateToAdForm()}
         />
       </View>
     );
@@ -42,8 +68,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => ({ ads: state.ads.ads, currentUser: state.users.currentUser });
+const mapStateToProps = state => {
+  return {
+    ads: state.ads.ads,
+    currentUser: state.users.currentUser,
+    isLoading: state.ui.isLoading,
+  };
+};
 
-const mapDispatchToProps = dispatch => ({ onSelectAd: (key) => dispatch(selectAd(key)) });
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchAds: (options) => dispatch(fetchAds(options)),
+    getCurrentUser: () => dispatch(getCurrentUser()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdList);

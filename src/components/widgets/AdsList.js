@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, Image, Text, TouchableHighlight, StyleSheet, View, Platform } from 'react-native';
+import { FlatList, Image, Text, TouchableHighlight, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import COLORS from '../../theme/Colors';
+import { API_PATH } from '../../constants';
 
 export default class AdsList extends Component {
 
@@ -16,24 +17,28 @@ export default class AdsList extends Component {
 
   renderItem = (ad) => {
     return (
-      <TouchableHighlight onPress={() => this.props.onAdSelectedHandler(ad)} underlayColor={Theme.COLORS[4]}>
-          <View style={styles.listItemContainer}>
-            <Image source={{ uri: ad.img }}
-              style={styles.listItemImage} />
-            <View style={styles.listItemDataContainer}>
-              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-                {ad.title}
-              </Text>
-              <Text style={{ fontSize: 16 }}>
-                {ad.city}, {ad.state}
-              </Text>
-              <Text style={{ fontSize: 14, color: 'gray' }}>
-                {ad.createdAt}
-              </Text>
-            </View>
+      <TouchableHighlight onPress={() => this.props.onAdSelectedHandler(ad)} underlayColor={COLORS[4]}>
+        <View style={styles.listItemContainer}>
+          <Image source={{ uri: `${API_PATH}${ad.picture_url}` }}
+            style={styles.listItemImage} />
+          <View style={styles.listItemDataContainer}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+              {ad.title}
+            </Text>
+            <Text style={{ fontSize: 16 }}>
+              {ad.city}, {ad.state}
+            </Text>
+            <Text style={{ fontSize: 14, color: 'gray' }}>
+              {ad.createdAt}
+            </Text>
           </View>
-        </TouchableHighlight>
+        </View>
+      </TouchableHighlight>
     );
+  }
+
+  _keyExtractor(item, index) {
+    return item.id.toString();
   }
 
   render() {
@@ -45,12 +50,13 @@ export default class AdsList extends Component {
         </View>
       );
     }
-    
+
     return (
       <FlatList
         data={this.props.ads}
         ItemSeparatorComponent={this.renderSeparator}
-        renderItem={({item: ad}) => this.renderItem(ad)}
+        keyExtractor={this._keyExtractor}
+        renderItem={({ item: ad }) => this.renderItem(ad)}
       />
     );
   }

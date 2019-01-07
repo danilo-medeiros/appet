@@ -1,32 +1,20 @@
-import { INSERT_AD, UPDATE_AD, SELECT_AD, DESELECT_AD, DELETE_AD } from "../actions/actionTypes";
+import { SET_ADS } from "../actions/actionTypes";
 
 const initialState = {
   ads: [],
+  selectedAd: null,
+  currentPage: 1,
 };
-
-let currentKey = 1;
 
 const adsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case INSERT_AD:
+    case SET_ADS:
       return {
         ...state,
-        ads: state.ads.concat({
-          key: ++currentKey,
-          createdAt: new Date().toLocaleDateString(),
-          ...action.ad,
-          img: 'https://picsum.photos/200/200/?random',
-        }),
-      };
-    case UPDATE_AD:
-      return {
-        ...state,
-        ads: state.ads.map(ad => {
-          if (ad.key === action.ad.key) {
-            return action.ad;
-          }
-          return ad;
-        })
+        ads: action.currentPage === 1
+          ? action.ads
+          : state.ads.concat(action.ads),
+        currentPage: action.currentPage,
       };
     default:
       return state;
