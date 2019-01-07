@@ -19,7 +19,7 @@ class AdList extends Component {
     if (this.props.currentUser) {
       this.props.navigation.navigate('NewAd');
     } else {
-      this.props.navigation.navigate('ProfileDetails', { nextRoute: 'NewAd' });
+      this.props.navigation.navigate('ProfileDetails');
     }
   }
 

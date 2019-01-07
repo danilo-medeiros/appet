@@ -4,6 +4,7 @@ import {
   UPDATE_CURRENT_USER,
   CLEAN_AUTH_DATA,
   SET_TOKEN,
+  LOGIN,
 } from "../actions/actionTypes";
 
 const initialState = {

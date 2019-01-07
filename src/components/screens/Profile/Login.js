@@ -7,9 +7,7 @@ import { Button } from '../../widgets';
 import { MANDATORY_FIELD_MESSAGE } from '../../../constants';
 import COLORS from '../../../theme/Colors';
 
-import { setCurrentUser, setToken } from '../../../store/actions';
-import { sendCredentials, register } from '../../../api';
-import { storeData } from '../../../helpers';
+import { login } from '../../../store/actions';
 
 const Form = t.form.Form;
 
@@ -39,43 +37,36 @@ class Login extends Component {
   constructor(props) {
     super(props);
     const navigatorRoute = this.props.navigation.getParam('nextRoute');
-    this.nextRoute = navigatorRoute ? navigatorRoute : 'Ads';
-  }
-
-  onAuthenticationFinished(user) {
-    // this.props.onAuthenticate(token);
-    this.props.onRegister(user);
-    this.props.navigation.navigate(this.nextRoute);
-  } 
-
-  async authenticate(credentials) {
-    try {
-      const authResponse = await sendCredentials(credentials);
-      const registerResponse = await register(authResponse.token);
-      /* await storeData('currentUser', registerResponse);
-      await storeData('token', authResponse.token); */
-      this.onAuthenticationFinished(registerResponse);
-    } catch (e) {
-      alert(e.message);
-    }
+    this.nextRoute = navigatorRoute ? navigatorRoute : null;
   }
 
   handleSubmit = () => {
     const value = this._form.getValue();
     if (value) {
-      this.authenticate(value);
+      this.props.onLogin(value);
     }
   }
 
   render() {
+    let submitButton;
+
+    if (this.props.isLoading) {
+      submitButton = (<Button
+        text="Enviando..."
+        onPress={() => { }}
+      />);
+    } else {
+      submitButton = (<Button
+        text="Entrar"
+        onPress={this.handleSubmit}
+      />);
+    }
+
     return (
       <View style={styles.container}>
         <View style={{ padding: 20, }}>
           <Form ref={c => this._form = c} options={options} type={Credentials} />
-          <Button
-            text="Entrar"
-            onPress={this.handleSubmit}
-          />
+          {submitButton}
         </View>
         <Text style={styles.or}>ou</Text>
         <View style={{ padding: 20 }}>
@@ -104,11 +95,12 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  isLoading: state.ui.isLoading,
+});
 
 const mapDispatchToProps = (dispatch) => ({
-  onRegister: (user) => dispatch(setCurrentUser(user)),
-  onAuthenticate: (token) => dispatch(setToken(token)),
+  onLogin: (credentials) => dispatch(login(credentials)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

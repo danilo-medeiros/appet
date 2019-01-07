@@ -5,6 +5,40 @@ import {
   CLEAN_AUTH_DATA,
   SET_TOKEN
 } from "./actionTypes";
+import { sendCredentials, register, signUp } from "../../api";
+import { uiStartLoading, uiStopLoading } from "./ui";
+
+export const login = (credentials) => {
+  return dispatch => {
+    dispatch(uiStartLoading());
+    sendCredentials(credentials)
+      .then(authResponse => register(authResponse.token))
+      .then(registerResponse => {
+        dispatch(uiStopLoading());
+        dispatch(setCurrentUser(registerResponse));
+      })
+      .catch(error => {
+        alert(error.message);
+        dispatch(uiStopLoading());
+      });
+  };
+};
+
+export const insertUser = (user) => {
+  return dispatch => {
+    dispatch(uiStartLoading());
+    signUp(user)
+      .then(signUpResponse => register(signUpResponse.auth_token))
+      .then(registerResponse => {
+        dispatch(uiStopLoading());
+        dispatch(setCurrentUser(registerResponse));
+      })
+      .catch(error => {
+        alert(error.message);
+        dispatch(uiStopLoading());
+      });
+  };
+}
 
 export const setCurrentUser = (currentUser) => {
   return {

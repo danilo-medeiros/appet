@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import { UserForm, UserPassword } from '../../widgets';
 
-import { setCurrentUser } from '../../../store/actions';
-import { signUp } from '../../../api';
+import { insertUser } from '../../../store/actions';
+import { register } from '../../../api';
 
 class SignUp extends Component {
 
@@ -13,11 +13,11 @@ class SignUp extends Component {
     user: null,
   };
 
-  async saveUser() {
+  async saveUser(user) {
     try {
-      const createdUser = await signUp(this.state.user);
-      console.log(createdUser);
-      this.props.onSave(createdUser);
+      const signUpResponse = await signUp(user);
+      const resgisterResponse = await register(signUpResponse.auth_token);
+      this.props.onSave(resgisterResponse);
       this.props.navigation.navigate('ProfileDetails');
     } catch (error) {
       alert(error.message);
@@ -32,14 +32,11 @@ class SignUp extends Component {
   }
 
   handlePasswordSubmit(passwordData) {
-    this.setState({
-      ...this.state,
-      user: {
-        ...this.state.user,
-        password: passwordData.password,
-      },
-    });
-    this.saveUser();
+    const user = {
+      ...this.state.user,
+      password: passwordData.password,
+    };
+    this.props.onSave(user);
   }
 
   render() {
@@ -57,7 +54,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onSave: (user) => dispatch(setCurrentUser(user)),
+  onSave: (user) => dispatch(insertUser(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

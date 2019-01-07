@@ -36,16 +36,13 @@ class UserPassword extends Component {
 
   handleSubmit() {
     const value = this._form.getValue();
-    console.log(value);
-    if (value) {
+    if (!value) {
       return;
     }
-    console.log(value.password !== value.password_confirmation);
     if (value.password !== value.password_confirmation) {
       alert('As senhas não batem');
       return;
     }
-    console.log(value);
     this.setState({
       ...value,
     });
