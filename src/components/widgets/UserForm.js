@@ -18,57 +18,9 @@ const User = t.struct({
   phone_number: t.String,
   postal_code: maybe(t.String),
   neighborhood: t.String,
-  state: Uf,
   city: t.String,
+  state: Uf,
 });
-
-const options = {
-  i18n: {
-    ...Form.i18n,
-    optional: ' (opcional)',
-  },
-  fields: {
-    name: {
-      label: 'Nome completo',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 40,
-      autoCapitalize: 'words',
-    },
-    email: {
-      label: 'E-mail',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 40,
-      keyboardType: 'email-address',
-    },
-    phone_number: {
-      label: 'Número do celular',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 11,
-      keyboardType: 'number-pad',
-    },
-    postal_code: {
-      label: 'CEP',
-      maxLength: 8,
-      keyboardType: 'number-pad',
-    },
-    state: {
-      label: 'Estado',
-      error: MANDATORY_FIELD_MESSAGE,
-    },
-    neighborhood: {
-      label: 'Bairro',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 30,
-      autoCapitalize: 'words',
-    },
-    city: {
-      label: 'Cidade',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 30,
-      autoCapitalize: 'words',
-    },
-  },
-};
 
 class UserForm extends Component {
 
@@ -85,6 +37,66 @@ class UserForm extends Component {
         user: this.props.currentUser,
       };
     }
+  }
+
+  formOptions() {
+    return {
+      i18n: {
+        ...Form.i18n,
+        optional: ' (opcional)',
+      },
+      fields: {
+        name: {
+          label: 'Nome completo',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 40,
+          autoCapitalize: 'words',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('email').refs.input.focus(),
+        },
+        email: {
+          label: 'E-mail',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 40,
+          keyboardType: 'email-address',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('phone_number').refs.input.focus(),
+        },
+        phone_number: {
+          label: 'Número do celular',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 11,
+          keyboardType: 'number-pad',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('postal_code').refs.input.focus(),
+        },
+        postal_code: {
+          label: 'CEP',
+          maxLength: 8,
+          keyboardType: 'number-pad',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('neighborhood').refs.input.focus(),
+        },
+        neighborhood: {
+          label: 'Bairro',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 30,
+          autoCapitalize: 'words',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('city').refs.input.focus(),
+        },
+        city: {
+          label: 'Cidade',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 30,
+          autoCapitalize: 'words',
+        },
+        state: {
+          label: 'Estado',
+          error: MANDATORY_FIELD_MESSAGE,
+        },
+      }
+    };
   }
 
   updatePostalCode(user) {
@@ -127,7 +139,7 @@ class UserForm extends Component {
             <Form ref={c => this._form = c}
               type={User}
               value={this.state.user}
-              options={options}
+              options={this.formOptions()}
               onChange={this.onChange.bind(this)}
             />
           </View>

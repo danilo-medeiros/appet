@@ -23,7 +23,13 @@ export default class PickImage extends Component {
         this.setState({
           pickedImage: { uri: res.uri }
         });
-        this.props.onImagePicked({ uri: res.uri, type: res.type, name: res.fileName });
+        let imageType;
+        if (!res.type) {
+          imageType = `image/${res.fileName.split('.').reverse()[0]}`
+        } else {
+          imageType = res.type;
+        }
+        this.props.onImagePicked({ uri: res.uri, type: imageType, name: res.fileName });
       }
     });
   }

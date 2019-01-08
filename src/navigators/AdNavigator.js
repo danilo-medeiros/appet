@@ -1,6 +1,6 @@
 import { createStackNavigator } from 'react-navigation';
 
-import { MainDrawerIcon } from '../components/widgets';
+import { MainDrawerIcon, BackIcon } from '../components/widgets';
 import { AdList, AdForm, AdDetails } from '../components/screens/Ads';
 import COLORS from "../theme/Colors";
 
@@ -24,7 +24,7 @@ const AdNavigator = createStackNavigator(
       navigationOptions: {
         title: 'Detalhes do anúncio',
       },
-    }
+    },
   },
   {
     initialRouteName: 'ListAds',

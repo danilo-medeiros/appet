@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation';
 import { SignUp, EditProfile, ProfileDetails } from '../components/screens/Profile';
 import { MainDrawerIcon } from '../components/widgets';
 import COLORS from '../theme/Colors';
+import { ProfileAdList, AdDetails } from '../components/screens/Ads';
 
 const ProfileNavigator = createStackNavigator(
   {
@@ -24,6 +25,18 @@ const ProfileNavigator = createStackNavigator(
         title: 'Minha conta',
         headerLeft: MainDrawerIcon(navigation),
       }),
+    },
+    ProfileAds: {
+      screen: ProfileAdList,
+      navigationOptions: {
+        title: 'Meus anúncios',
+      },
+    },
+    ShowProfileAd: {
+      screen: AdDetails,
+      navigationOptions: {
+        title: 'Detalhes do anúncio',
+      },
     },
   },
   {

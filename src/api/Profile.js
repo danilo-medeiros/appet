@@ -1,4 +1,5 @@
 import { API_PATH } from "../constants";
+import { getData } from "../helpers";
 
 const sendCredentials = async function(credentials) {
   const response = await fetch(`${API_PATH}auth/login`, {
@@ -43,4 +44,21 @@ const signUp = async function(user) {
   return await response.json();
 };
 
-export { register, sendCredentials, signUp };
+const updateUser = async function(user) {
+  const authToken = await getData('token');
+  const response = await fetch(`${API_PATH}register`, {
+    method: 'PUT',
+    body: JSON.stringify(user),
+    headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': authToken,
+    },
+  });
+  if (response.status === 422) {
+    throw new Error('Não foi possível atualizar seu perfil.');
+  }
+  return await response.json();
+};
+
+export { register, sendCredentials, signUp, updateUser };

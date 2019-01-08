@@ -3,7 +3,7 @@ import {
   UNSET_CURRENT_USER,
   UPDATE_CURRENT_USER,
 } from "./actionTypes";
-import { sendCredentials, register, signUp } from "../../api";
+import { sendCredentials, register, signUp, updateUser } from "../../api";
 import { uiStartLoading, uiStopLoading } from "./ui";
 import { storeData, getData, removeData } from "../../helpers/Storage";
 
@@ -40,12 +40,28 @@ export const insertUser = (user) => {
   };
 }
 
+export const updateCurrentUser = (user) => {
+  return async dispatch => {
+    dispatch(uiStartLoading());
+    try {
+      const updatedUser = await updateUser(user);
+      dispatch(setCurrentUser(updatedUser));
+    } catch (error) {
+      alert(error.message);
+    }
+    dispatch(uiStopLoading());
+  };
+}
+
 export const getCurrentUser = () => {
-  return dispatch => {
-    getData('token')
-      .then(token => register(token))
-      .then(registerResponse => dispatch(setCurrentUser(registerResponse)))
-      .catch(error => alert(error.message));
+  return async dispatch => {
+    try {
+      const token = await getData('token');
+      const registeredUser = await register(token);
+      dispatch(setCurrentUser(registeredUser));
+    } catch (error) {
+      alert(error.message); 
+    }
   };
 };
 
@@ -54,13 +70,6 @@ const setCurrentUser = (currentUser) => {
     currentUser,
     type: SET_CURRENT_USER,
   }
-};
-
-export const updateCurrentUser = (currentUser) => {
-  return {
-    currentUser,
-    type: UPDATE_CURRENT_USER,
-  };
 };
 
 const unsetCurrentUser = () => {

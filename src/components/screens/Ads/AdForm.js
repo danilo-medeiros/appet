@@ -39,79 +39,11 @@ const Ad = {
     size: SizeType,
   }),
   address: t.struct({
-    cep: t.maybe(t.String),
+    postal_code: t.maybe(t.String),
     neighborhood: t.String,
     city: t.String,
     state: Uf,
   }),
-};
-
-const dataOptions = {
-  i18n: {
-    ...Form.i18n,
-    optional: ' (opcional)',
-  },
-  fields: {
-    title: {
-      label: 'Título do anúncio',
-      maxLength: 30,
-      autoCapitalize: 'words',
-    },
-    pet_name: {
-      label: 'Nome do pet',
-      maxLength: 40,
-      autoCapitalize: 'words',
-    },
-    pet_type: {
-      label: 'Tipo de pet',
-      error: MANDATORY_FIELD_MESSAGE
-    },
-    description: {
-      label: 'Descrição',
-      maxLength: 100,
-      numberOfLines: 5,
-      multiline: true,
-    },
-    aprox_age: {
-      label: 'Idade aprox. em meses',
-    },
-    weight: {
-      label: 'Peso aprox.',
-    },
-    size: {
-      label: 'Tamanho',
-    },
-  },
-};
-
-const addressOptions = {
-  i18n: {
-    ...Form.i18n,
-    optional: ' (opcional)',
-  },
-  fields: {
-    cep: {
-      label: 'CEP',
-      maxLength: 8,
-      keyboardType: 'number-pad',
-    },
-    neighborhood: {
-      label: 'Bairro',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 30,
-      autoCapitalize: 'words',
-    },
-    city: {
-      label: 'Cidade',
-      error: MANDATORY_FIELD_MESSAGE,
-      maxLength: 30,
-      autoCapitalize: 'words',
-    },
-    state: {
-      label: 'Estado',
-      error: MANDATORY_FIELD_MESSAGE,
-    },
-  },
 };
 
 class AdForm extends Component {
@@ -127,6 +59,86 @@ class AdForm extends Component {
 
   constructor(props) {
     super(props);
+  }
+
+  dataFormOptions() {
+    return {
+      i18n: {
+        ...Form.i18n,
+        optional: ' (opcional)',
+      },
+      fields: {
+        title: {
+          label: 'Título do anúncio',
+          maxLength: 30,
+          autoCapitalize: 'sentences',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('pet_name').refs.input.focus(),
+        },
+        pet_name: {
+          label: 'Nome do pet',
+          maxLength: 40,
+          autoCapitalize: 'words',
+        },
+        pet_type: {
+          label: 'Tipo de pet',
+          error: MANDATORY_FIELD_MESSAGE
+        },
+        description: {
+          label: 'Descrição',
+          maxLength: 100,
+          numberOfLines: 5,
+          multiline: true,
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form.getComponent('aprox_age').refs.input.focus(),
+        },
+        aprox_age: {
+          label: 'Idade aprox. em meses',
+        },
+        weight: {
+          label: 'Peso aprox.',
+        },
+        size: {
+          label: 'Tamanho',
+        },
+      },
+    };
+  }
+
+  addressFormOptions() {
+    return {
+      i18n: {
+        ...Form.i18n,
+        optional: ' (opcional)',
+      },
+      fields: {
+        postal_code: {
+          label: 'CEP',
+          maxLength: 8,
+          keyboardType: 'number-pad',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form1.getComponent('neighborhood').refs.input.focus(),
+        },
+        neighborhood: {
+          label: 'Bairro',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 30,
+          autoCapitalize: 'words',
+          returnKeyType: 'next',
+          onSubmitEditing: () => this._form1.getComponent('city').refs.input.focus(),
+        },
+        city: {
+          label: 'Cidade',
+          error: MANDATORY_FIELD_MESSAGE,
+          maxLength: 30,
+          autoCapitalize: 'words',
+        },
+        state: {
+          label: 'Estado',
+          error: MANDATORY_FIELD_MESSAGE,
+        },
+      },
+    }
   }
 
   onImagePicked(image) {
@@ -147,26 +159,60 @@ class AdForm extends Component {
 
     if (adData && address) {
       const ad = { ...adData, ...address };
-      this.props.onSave(ad, this.state.image, () => this.props.navigation.navigate('AdList'));
+      this.props.onSave(ad, this.state.image)
+        .then(() => this.props.navigation.goBack()
+      );
     }
   }
 
   onAddressModeValueChange(value) {
     if (value) {
-      this.state = {
+      this.setState({
         ...this.state,
         sameAddressOfUser: true,
-        address: {
-          neighborhood: this.props.currentUser.neighborhood,
-          city: this.props.currentUser.city,
-          state: this.props.currentUser.state,
+        ad: {
+          ...this.state.ad,
+          address: {
+            postal_code: this.props.currentUser.postal_code,
+            neighborhood: this.props.currentUser.neighborhood,
+            city: this.props.currentUser.city,
+            state: this.props.currentUser.state,
+          },
         },
-      };
+      });
     } else {
-      this.state = {
+      this.setState({
         ...this.state,
         sameAddressOfUser: false,
-      }
+      });
+    }
+  }
+
+  onDataFormChanged(value) {
+    this.setState({
+      ...this.state,
+      ad: {
+        ...this.state.ad,
+        data: value,
+      },
+    });
+  }
+
+  onAddressFormChanged(value) {
+    this.setState({
+      ...this.state,
+      ad: {
+        ...this.state.ad,
+        address: value,
+      },
+    });
+  }
+
+  renderButton() {
+    if (this.props.isLoading) {
+      return (<Button text={'Carregando...'} onPress={() => {}} />);
+    } else {
+      return (<Button text={'Confirmar'} onPress={() => this.handleSubmit()} />);
     }
   }
 
@@ -179,7 +225,8 @@ class AdForm extends Component {
             <Form ref={c => this._form = c}
               type={Ad.data}
               value={this.state.ad.data}
-              options={dataOptions}
+              options={this.dataFormOptions()}
+              onChange={(value) => this.onDataFormChanged(value)}
             />
 
             <View style={styles.switchContainer}>
@@ -193,11 +240,12 @@ class AdForm extends Component {
             <Form ref={c => this._form1 = c}
               type={Ad.address}
               value={this.state.ad.address}
-              options={addressOptions}
+              options={this.addressFormOptions()}
+              onChange={(value) => this.onDataFormChanged(value)}
             />
           </View>
         </ScrollView>
-        <Button text='Confirmar' onPress={() => this.handleSubmit()} />
+        {this.renderButton()}
       </View>
     );
   }
@@ -225,11 +273,12 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+  isLoading: state.ui.isLoading,
   currentUser: state.users.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onSave: (ad, image, onAdInserted) => dispatch(insertAd(ad, image, onAdInserted)),
+  onSave: (ad, image) => dispatch(insertAd(ad, image)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdForm);

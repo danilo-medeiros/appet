@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Button, AdsList } from '../../widgets';
@@ -42,7 +42,7 @@ class AdList extends Component {
 
   renderList() {
     if (this.props.isLoading) {
-      return (<Text>Carregando...</Text>);
+      return (<View style={{flex: 1, justifyContent: 'center'}}><ActivityIndicator size='large'></ActivityIndicator></View>);
     }
     return (<AdsList ads={this.props.ads}
       onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)}

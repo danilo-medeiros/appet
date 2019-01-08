@@ -15,12 +15,20 @@ export default class AdsList extends Component {
     <View style={styles.separator}></View>
   )
 
+  renderImage(ad) {
+    if (ad.picture_url === null) {
+      return (<Image source={require(`../../assets/picture.png`)}
+        style={styles.listItemImage}/>);
+    }
+    return (<Image source={{ uri: `${API_PATH}${ad.picture_url}` }}
+      style={styles.listItemImage}/>);
+  }
+
   renderItem = (ad) => {
     return (
       <TouchableHighlight onPress={() => this.props.onAdSelectedHandler(ad)} underlayColor={COLORS[4]}>
         <View style={styles.listItemContainer}>
-          <Image source={{ uri: `${API_PATH}${ad.picture_url}` }}
-            style={styles.listItemImage} />
+          {this.renderImage(ad)}
           <View style={styles.listItemDataContainer}>
             <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
               {ad.title}
@@ -29,7 +37,7 @@ export default class AdsList extends Component {
               {ad.city}, {ad.state}
             </Text>
             <Text style={{ fontSize: 14, color: 'gray' }}>
-              {ad.createdAt}
+              {new Date(ad.created_at).toLocaleDateString()}
             </Text>
           </View>
         </View>

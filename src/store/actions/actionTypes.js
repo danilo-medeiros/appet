@@ -2,6 +2,7 @@ export const DELETE_AD = 'DELETE_AD';
 export const SELECT_AD = 'SELECT_AD';
 export const DESELECT_AD = 'DESELECT_AD';
 export const SET_ADS = 'SET_ADS';
+export const SET_PROFILE_ADS = 'SET_PROFILE_ADS';
 
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const SET_TOKEN = 'SET_TOKEN';

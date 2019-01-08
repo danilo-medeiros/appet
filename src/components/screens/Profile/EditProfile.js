@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { updateCurrentUser } from '../../../store/actions';
 import { UserForm } from '../../widgets';
+
+import { updateCurrentUser } from '../../../store/actions';
 
 class EditProfile extends Component {
 
-  handleSubmit(value) {
-    this.props.onUpdate(value);
-    this.props.navigation.navigate('ProfileDetails');
+  state = {
+    user: null,
+  };
+
+  handleSubmit(user) {
+    this.props.onSave(user)
+      .then(() => this.props.navigation.goBack());
   }
 
   render() {
-    return (
-      <UserForm currentUser={this.props.currentUser}
-        onSubmit={(value) => this.handleSubmit(value)}
-        isEditionMode={true}
-      />
-    );
+    return (<UserForm currentUser={this.props.currentUser} isEditionMode={true} onSubmit={(user) => this.handleSubmit(user)} />);
   }
 }
 
@@ -26,7 +26,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onUpdate: (user) => dispatch(updateCurrentUser(user)),
+  onSave: (user) => dispatch(updateCurrentUser(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile);

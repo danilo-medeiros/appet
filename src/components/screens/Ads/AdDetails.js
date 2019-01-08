@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import Communications from 'react-native-communications';
+import { connect } from 'react-redux';
 
 import { Button } from '../../widgets';
+import { fetchAd } from '../../../store/actions/ads';
+import { API_PATH } from '../../../constants';
 
 const PET_TYPES = {
   dog: 'Cachorro',
@@ -48,6 +51,12 @@ const DetailsRow = (props) => (
 
 class AdDetails extends Component {
 
+  constructor(props) {
+    super(props);
+    const selectedAd = this.props.navigation.getParam('item');
+    this.props.fetchAd(selectedAd.id);
+  }
+
   renderAproxAge = (age) => {
     if (age) {
       return (
@@ -66,19 +75,42 @@ class AdDetails extends Component {
     return (<View />);
   }
 
+  renderImage() {
+    if (this.props.ad.picture_url) {
+      return (<Image source={{ uri: `${API_PATH}${this.props.ad.picture_url}` }} style={styles.image} />);
+    }
+    return (<Image source={require('../../../assets/picture.png')} style={styles.image} />);
+  }
+
+  renderLoading() {
+    return (<View style={{flex: 1, justifyContent: 'center'}}><ActivityIndicator size='large'></ActivityIndicator></View>);
+  }
+
+  renderButton() {
+    if (this.props.currentUser && this.props.currentUser.id === this.props.ad.user.id) {
+      return (<Button text='Editar' onPress={() => this.navigation.navigate('EditAd')} />);  
+    }
+    return (<Button text='Ligar' onPress={() => Communications.phonecall(this.props.ad.user.phone_number, true)} />);
+  }
+
   render() {
-    const ad = this.props.navigation.getParam('item');
+    const ad = this.props.ad;
+
+    if (this.props.isLoading || !ad) {
+      return this.renderLoading();
+    }
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView>
-          <Image source={{ uri: ad.img }} style={styles.image} />
+          {this.renderImage()}
           <View style={styles.mainView}>
             <ItemWrapper style={{ paddingVertical: 5 }}>
               <Text style={styles.title}>{ad.title}</Text>
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.datetime}>Publicado em {ad.datetime}</Text>
+              <Text style={styles.datetime}>Publicado em {new Date(ad.created_at).toLocaleDateString()}</Text>
             </ItemWrapper>
 
             <Separator />
@@ -132,7 +164,7 @@ class AdDetails extends Component {
             </ItemWrapper>
           </View>
         </ScrollView>
-        <Button text='Ligar' onPress={() => Communications.phonecall('84992120696', true)} />
+        {this.renderButton()}
       </View>
     )
   }
@@ -168,4 +200,18 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AdDetails;
+const mapStateToProps = state => {
+  return {
+    ad: state.ads.selectedAd,
+    isLoading: state.ui.isLoading,
+    currentUser: state.users.currentUser,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchAd: (id) => dispatch(fetchAd(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AdDetails);
