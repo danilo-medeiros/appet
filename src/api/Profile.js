@@ -1,8 +1,7 @@
-import { API_PATH } from "../constants";
-import { getData } from "../helpers";
+import { getData, apiPath } from "../helpers";
 
 const sendCredentials = async function(credentials) {
-  const response = await fetch(`${API_PATH}auth/login`, {
+  const response = await fetch(`${apiPath()}auth/login`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -17,7 +16,7 @@ const sendCredentials = async function(credentials) {
 }
 
 const register = async function(token) {
-  const response = await fetch(`${API_PATH}register`, {
+  const response = await fetch(`${apiPath()}register`, {
     headers: {
       'Accept': 'application/json',
       'Authorization': token,
@@ -30,7 +29,7 @@ const register = async function(token) {
 }
 
 const signUp = async function(user) {
-  const response = await fetch(`${API_PATH}signup`, {
+  const response = await fetch(`${apiPath()}signup`, {
     method: 'POST',
     body: JSON.stringify(user),
     headers: {
@@ -46,7 +45,7 @@ const signUp = async function(user) {
 
 const updateUser = async function(user) {
   const authToken = await getData('token');
-  const response = await fetch(`${API_PATH}register`, {
+  const response = await fetch(`${apiPath()}register`, {
     method: 'PUT',
     body: JSON.stringify(user),
     headers: {

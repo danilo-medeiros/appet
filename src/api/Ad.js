@@ -1,5 +1,5 @@
-import { API_PATH } from "../constants";
 import { getData } from "../helpers/Storage";
+import { apiPath } from "../helpers";
 
 const ransackParams = (params) => {
   let src = '';
@@ -13,7 +13,7 @@ const ransackParams = (params) => {
 }
 
 const getAds = async (options) => {
-  const src = `${API_PATH}ads?page=${options.currentPage}${ransackParams(options.ransack)}`;
+  const src = `${apiPath()}ads?page=${options.currentPage}${ransackParams(options.ransack)}`;
 
   const response = await fetch(src, {
     headers: {
@@ -28,7 +28,7 @@ const getAds = async (options) => {
 };
 
 const getAd = async (id) => {
-  const response = await fetch(`${API_PATH}ads/${id}`, {
+  const response = await fetch(`${apiPath()}ads/${id}`, {
     headers: {
       'Accept': 'application/json',
     }
@@ -49,7 +49,7 @@ const uploadImage = async (adId, image) => {
     name: image.name,
   });
 
-  const response = await fetch(`${API_PATH}ads/${adId}/picture`, {
+  const response = await fetch(`${apiPath()}ads/${adId}/picture`, {
     method: 'POST',
     headers: {
       'Authorization': authToken,
@@ -66,7 +66,7 @@ const uploadImage = async (adId, image) => {
 
 const saveAd = async (ad, method) => {
   const authToken = await getData('token');
-  const response = await fetch(`${API_PATH}ads`, {
+  const response = await fetch(`${apiPath()}ads`, {
     method,
     body: JSON.stringify(ad),
     headers: {
