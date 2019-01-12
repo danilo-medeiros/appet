@@ -1,20 +1,27 @@
-import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import Communications from 'react-native-communications';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator
+} from "react-native";
+import Communications from "react-native-communications";
+import { connect } from "react-redux";
 
-import { Button } from '../../widgets';
-import { fetchAd } from '../../../store/actions/ads';
-import { API_PATH } from '../../../constants';
+import { Button } from "../../widgets";
+import { fetchAd } from "../../../store/actions/ads";
+import { API_PATH } from "../../../constants";
 
 const PET_TYPES = {
-  dog: 'Cachorro',
-  cat: 'Gato',
-  bird: 'Pássaro',
-  other: 'Outros',
-}
+  dog: "Cachorro",
+  cat: "Gato",
+  bird: "Pássaro",
+  other: "Outros"
+};
 
-const ageText = (age) => {
+const ageText = age => {
   if (age > 12) {
     return `${age / 12} anos`;
   }
@@ -24,22 +31,18 @@ const ageText = (age) => {
   if (age < 12) {
     return `${age} meses`;
   }
-}
+};
 
-const ItemWrapper = (props) => {
+const ItemWrapper = props => {
   return (
-    <View style={{ paddingVertical: 5, ...props.style }}>
-      {props.children}
-    </View>
+    <View style={{ paddingVertical: 5, ...props.style }}>{props.children}</View>
   );
-}
+};
 
-const Separator = () => (
-  <View style={styles.separator}></View>
-);
+const Separator = () => <View style={styles.separator} />;
 
-const DetailsRow = (props) => (
-  <ItemWrapper style={{ flex: 1, flexDirection: 'row' }}>
+const DetailsRow = props => (
+  <ItemWrapper style={{ flex: 1, flexDirection: "row" }}>
     <View style={{ flex: 1 }}>
       <Text style={styles.description}>{props.title}</Text>
     </View>
@@ -53,44 +56,71 @@ class AdDetails extends Component {
 
   constructor(props) {
     super(props);
-    const selectedAd = this.props.navigation.getParam('item');
+    const selectedAd = this.props.navigation.getParam("item");
     this.props.fetchAd(selectedAd.id);
   }
 
-  renderAproxAge = (age) => {
+  renderAproxAge(age) {
     if (age) {
-      return (
-        <DetailsRow title='Idade aprox.' value={ageText(age)} />
-      )
+      return <DetailsRow title='Idade aprox.' value={ageText(age)} />;
     }
-    return (<View />);
-  }
+    return <View />;
+  };
 
-  renderWeight = (weight) => {
+  renderWeight(weight) {
     if (weight) {
-      return (
-        <DetailsRow title='Peso' value={`${weight} kg`} />
-      )
+      return <DetailsRow title='Peso' value={`${weight} kg`} />;
     }
-    return (<View />);
-  }
+    return <View />;
+  };
 
   renderImage() {
     if (this.props.ad.picture_url) {
-      return (<Image source={{ uri: `${API_PATH}${this.props.ad.picture_url}` }} style={styles.image} />);
+      return (
+        <Image
+          source={{ uri: `${API_PATH}${this.props.ad.picture_url}` }}
+          style={styles.image}
+        />
+      );
     }
-    return (<Image source={require('../../../assets/picture.png')} style={styles.image} />);
+    return (
+      <Image
+        source={require("../../../assets/picture.png")}
+        style={styles.image}
+      />
+    );
   }
 
   renderLoading() {
-    return (<View style={{flex: 1, justifyContent: 'center'}}><ActivityIndicator size='large'></ActivityIndicator></View>);
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
   }
 
   renderButton() {
-    if (this.props.currentUser && this.props.currentUser.id === this.props.ad.user.id) {
-      return (<Button text='Editar' onPress={() => this.navigation.navigate('EditAd')} />);  
+    if (
+      this.props.currentUser &&
+      this.props.currentUser.id === this.props.ad.user.id
+    ) {
+      return (
+        <Button
+          text='Editar'
+          onPress={() =>
+            this.props.navigation.navigate("EditAd", { image: this.image })
+          }
+        />
+      );
     }
-    return (<Button text='Ligar' onPress={() => Communications.phonecall(this.props.ad.user.phone_number, true)} />);
+    return (
+      <Button
+        text='Ligar'
+        onPress={() =>
+          Communications.phonecall(this.props.ad.user.phone_number, true)
+        }
+      />
+    );
   }
 
   render() {
@@ -110,7 +140,9 @@ class AdDetails extends Component {
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.datetime}>Publicado em {new Date(ad.created_at).toLocaleDateString()}</Text>
+              <Text style={styles.datetime}>
+                Publicado em {new Date(ad.created_at).toLocaleDateString()}
+              </Text>
             </ItemWrapper>
 
             <Separator />
@@ -140,7 +172,9 @@ class AdDetails extends Component {
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.description}>{ad.city} - {ad.state}</Text>
+              <Text style={styles.description}>
+                {ad.city} - {ad.state}
+              </Text>
             </ItemWrapper>
 
             <Separator />
@@ -160,58 +194,64 @@ class AdDetails extends Component {
             </ItemWrapper>
 
             <ItemWrapper>
-              <Text style={styles.description}>{ad.user.name.split(' ')[0]}</Text>
+              <Text style={styles.description}>
+                {ad.user.name.split(" ")[0]}
+              </Text>
             </ItemWrapper>
           </View>
         </ScrollView>
         {this.renderButton()}
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   image: {
-    width: '100%',
-    height: 250,
+    width: "100%",
+    height: 250
   },
   mainView: {
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   title: {
-    fontSize: 25,
+    fontSize: 25
   },
   datetime: {
-    color: '#000',
+    color: "#000"
   },
   separator: {
-    backgroundColor: '#CCC',
-    width: '100%',
+    backgroundColor: "#CCC",
+    width: "100%",
     height: 1,
-    marginVertical: 10,
+    marginVertical: 10
   },
   sectionTitle: {
-    fontWeight: '400',
-    fontSize: 18,
+    fontWeight: "400",
+    fontSize: 18
   },
   description: {
-    textAlign: 'justify',
+    textAlign: "justify"
   }
 });
 
 const mapStateToProps = state => {
   return {
     ad: state.ads.selectedAd,
+    image: state.ads.selectedImage,
     isLoading: state.ui.isLoading,
-    currentUser: state.users.currentUser,
+    currentUser: state.users.currentUser
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchAd: (id) => dispatch(fetchAd(id)),
+    fetchAd: id => dispatch(fetchAd(id))
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdDetails);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AdDetails);

@@ -14,7 +14,7 @@ const CustomDrawerContent = (props) => (
         alignItems: 'center',
       }}
     >
-      <Image source={require('../../assets/dog.png')} style={styles.icon} />
+      <Image source={require('../../assets/appet.png')} style={styles.icon} />
       <Text style={styles.title}>
         Appet
 			</Text>

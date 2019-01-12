@@ -3,11 +3,8 @@ import { StyleSheet, View, ScrollView, Switch, Text } from "react-native";
 import { connect } from "react-redux";
 import t from "tcomb-form-native";
 
-import { Button, PickImage } from "../../widgets";
-
-import { UFS, MANDATORY_FIELD_MESSAGE } from "../../../constants";
-
-import { insertAd } from "../../../store/actions";
+import { Button, PickImage } from "./";
+import { UFS, MANDATORY_FIELD_MESSAGE } from "../../constants";
 
 const Form = t.form.Form;
 
@@ -53,17 +50,32 @@ const Ad = {
 };
 
 class AdForm extends Component {
-  state = {
-    ad: {
-      data: null,
-      address: null
-    },
-    sameAddressOfUser: false,
-    image: null
-  };
-
   constructor(props) {
     super(props);
+
+    console.log(this.props.ad);
+    console.log(this.props.image);
+
+    if (this.props.ad) {
+      const { postal_code, neighborhood, city, state, ...ad } = this.props.ad;
+      this.state = {
+        ad: {
+          data: { ...ad },
+          address: { postal_code, neighborhood, city, state }
+        },
+        sameAddressOfUser: false,
+        image: null
+      };
+    } else {
+      this.state = {
+        ad: {
+          data: null,
+          address: null
+        },
+        sameAddressOfUser: false,
+        image: null
+      };
+    }
   }
 
   dataFormOptions() {
@@ -168,9 +180,7 @@ class AdForm extends Component {
 
     if (adData && address) {
       const ad = { ...adData, ...address };
-      this.props
-        .onSave(ad, this.state.image)
-        .then(() => this.props.navigation.goBack());
+      this.props.onSave(ad, this.state.image);
     }
   }
 
@@ -252,7 +262,7 @@ class AdForm extends Component {
               type={Ad.address}
               value={this.state.ad.address}
               options={this.addressFormOptions()}
-              onChange={value => this.onDataFormChanged(value)}
+              onChange={value => this.onAddressFormChanged(value)}
             />
           </View>
         </ScrollView>
@@ -288,9 +298,7 @@ const mapStateToProps = state => ({
   currentUser: state.users.currentUser
 });
 
-const mapDispatchToProps = dispatch => ({
-  onSave: (ad, image) => dispatch(insertAd(ad, image))
-});
+const mapDispatchToProps = dispatch => ({});
 
 export default connect(
   mapStateToProps,

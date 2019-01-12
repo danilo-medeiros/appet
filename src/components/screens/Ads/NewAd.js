@@ -2,14 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import { AdForm } from "../../widgets";
-import { updateAd } from "../../../store/actions";
 
-class EditAd extends Component {
-  constructor(props) {
-    super(props);
-    this.image = this.props.navigation.getParam("image");
-  }
+import { insertAd } from "../../../store/actions";
 
+class NewAd extends Component {
   onSave(ad, image) {
     this.props.onSave(ad, image).then(() => this.props.navigation.goBack());
   }
@@ -17,8 +13,6 @@ class EditAd extends Component {
   render() {
     return (
       <AdForm
-        ad={this.props.ad}
-        image={this.image}
         onSave={(ad, image) => {
           this.onSave(ad, image);
         }}
@@ -29,15 +23,14 @@ class EditAd extends Component {
 
 const mapStateToProps = state => ({
   isLoading: state.ui.isLoading,
-  currentUser: state.users.currentUser,
-  ad: state.ads.selectedAd
+  currentUser: state.users.currentUser
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSave: (ad, image) => dispatch(updateAd(ad, image))
+  onSave: (ad, image) => dispatch(insertAd(ad, image))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(EditAd);
+)(NewAd);

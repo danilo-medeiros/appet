@@ -64,10 +64,10 @@ const uploadImage = async (adId, image) => {
   return await response.json();
 };
 
-const saveAd = async (ad, method) => {
+const saveAd = async (ad) => {
   const authToken = await getData('token');
   const response = await fetch(`${apiPath()}ads`, {
-    method,
+    method: 'POST',
     body: JSON.stringify(ad),
     headers: {
       'Content-type': 'application/json',
@@ -81,4 +81,21 @@ const saveAd = async (ad, method) => {
   return await response.json();
 }
 
-export { getAds, saveAd, uploadImage, getAd };
+const updateAd = async (ad) => {
+  const authToken = await getData('token');
+  const response = await fetch(`${apiPath()}ads/${ad.id}`, {
+    method: 'PUT',
+    body: JSON.stringify(ad),
+    headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': authToken,
+    },
+  });
+  if (response.status !== 201) {
+    throw new Error('Não foi possível inserir o anúncio');
+  }
+  return await response.json();
+}
+
+export { getAds, saveAd, uploadImage, getAd, updateAd };

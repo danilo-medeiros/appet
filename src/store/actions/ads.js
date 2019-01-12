@@ -2,21 +2,22 @@ import { SELECT_AD, DELETE_AD, DESELECT_AD, SET_ADS, SET_PROFILE_ADS } from "./a
 import { uiStartLoading, uiStopLoading } from "./ui";
 import { getAds, saveAd, uploadImage, getAd } from "../../api";
 
-export const updateAd = (ad, onAdUpdated) => {
-  return dispatch => {
+export const updateAd = (ad, image) => {
+  return async (dispatch) => {
     dispatch(uiStartLoading());
-    saveAd(ad, 'POST')
-      .then(() => {
-        dispatch(fetchAds({currentPage: 1}));
-        dispatch(uiStopLoading());
-        if (onAdInserted) {
-          onAdUpdated();
-        }
-      })
-      .catch(error => {
-        alert(error.message);
-        dispatch(uiStopLoading());
-      });
+    try {
+      await updateAd(ad);
+      console.log(ad);
+      if (image) {
+        await uploadImage(ad.id, image);
+      }
+      dispatch(uiStopLoading());
+      dispatch(fetchAds({currentPage: 1}));
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+      dispatch(uiStopLoading());
+    }
   };
 };
 
@@ -24,7 +25,7 @@ export const insertAd = (ad, image) => {
   return async (dispatch) => {
     dispatch(uiStartLoading());
     try {
-      const savedAd = await saveAd(ad, 'POST');
+      const savedAd = await saveAd(ad);
       await uploadImage(savedAd.id, image);
       dispatch(uiStopLoading());
       dispatch(fetchAds({currentPage: 1}));
@@ -68,17 +69,17 @@ export const fetchProfileAds = (options, user_id) => {
 }
 
 export const fetchAd = (id) => {
-  return dispatch => {
+  return async dispatch => {
     dispatch(uiStartLoading());
-    getAd(id)
-      .then(res => {
-        dispatch(selectAd(res));
-        dispatch(uiStopLoading());
-      })
-      .catch(error => {
-        alert(error.message);
-        dispatch(uiStopLoading());
-      });
+    try {
+      const ad = await getAd(id);
+      dispatch(selectAd(ad));
+      dispatch(uiStopLoading());
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+      dispatch(uiStopLoading());
+    }
   };
 }
 

@@ -1,7 +1,7 @@
 import { createStackNavigator } from 'react-navigation';
 
-import { MainDrawerIcon, BackIcon } from '../components/widgets';
-import { AdList, AdForm, AdDetails } from '../components/screens/Ads';
+import { MainDrawerIcon } from '../components/widgets';
+import { AdList, NewAd, AdDetails, EditAd } from '../components/screens/Ads';
 import COLORS from "../theme/Colors";
 
 const AdNavigator = createStackNavigator(
@@ -14,7 +14,13 @@ const AdNavigator = createStackNavigator(
       }),
     },
     NewAd: {
-      screen: AdForm,
+      screen: NewAd,
+      navigationOptions: {
+        title: 'Novo anúncio',
+      },
+    },
+    EditAd: {
+      screen: EditAd,
       navigationOptions: {
         title: 'Novo anúncio',
       },
