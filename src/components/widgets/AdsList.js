@@ -1,38 +1,51 @@
 import React, { Component } from 'react';
-import { FlatList, Image, Text, TouchableHighlight, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  Text,
+  TouchableHighlight,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import COLORS from '../../theme/Colors';
 import { API_PATH } from '../../constants';
 
 export default class AdsList extends Component {
-
   constructor(props) {
     super(props);
   }
 
-  renderSeparator = () => (
-    <View style={styles.separator}></View>
-  )
+  renderSeparator = () => <View style={styles.separator} />;
 
   renderImage(ad) {
     if (ad.picture_url === null) {
-      return (<Image source={require(`../../assets/picture.png`)}
-        style={styles.listItemImage}/>);
+      return (
+        <Image
+          source={require(`../../assets/picture.png`)}
+          style={styles.listItemImage}
+        />
+      );
     }
-    return (<Image source={{ uri: `${API_PATH}${ad.picture_url}` }}
-      style={styles.listItemImage}/>);
+    return (
+      <Image
+        source={{ uri: `${API_PATH}${ad.picture_url}` }}
+        style={styles.listItemImage}
+      />
+    );
   }
 
-  renderItem = (ad) => {
+  renderItem = ad => {
     return (
-      <TouchableHighlight onPress={() => this.props.onAdSelectedHandler(ad)} underlayColor={COLORS[4]}>
+      <TouchableHighlight
+        onPress={() => this.props.onAdSelectedHandler(ad)}
+        underlayColor={COLORS[4]}>
         <View style={styles.listItemContainer}>
           {this.renderImage(ad)}
           <View style={styles.listItemDataContainer}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
-              {ad.title}
-            </Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{ad.title}</Text>
             <Text style={{ fontSize: 16 }}>
               {ad.city}, {ad.state}
             </Text>
@@ -43,14 +56,36 @@ export default class AdsList extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 
   _keyExtractor(item, index) {
     return item.id.toString();
   }
 
+  renderFooter() {
+    if (this.props.isLoading) {
+      return (
+        <View
+          style={{
+            paddingVertical: 20,
+            borderTopWidth: 1,
+            borderColor: '#CED0CE',
+          }}>
+          <ActivityIndicator animating size="large" />
+        </View>
+      );
+    }
+    return null;
+  }
+
+  onEndReached() {
+    if (!this.props.isLoading) {
+      this.props.fetchMore();
+    }
+  }
+
   render() {
-    if (this.props.ads.length === 0) {
+    if (this.props.ads.records.length === 0 && !this.props.isLoading) {
       return (
         <View style={styles.emptyListMessageContainer}>
           <Text style={styles.emptyListMessage}>Não há itens para mostrar</Text>
@@ -61,10 +96,13 @@ export default class AdsList extends Component {
 
     return (
       <FlatList
-        data={this.props.ads}
+        data={this.props.ads.records}
         ItemSeparatorComponent={this.renderSeparator}
         keyExtractor={this._keyExtractor}
         renderItem={({ item: ad }) => this.renderItem(ad)}
+        ListFooterComponent={() => this.renderFooter()}
+        onEndReached={() => this.onEndReached()}
+        onEndReachedThreshold={1}
       />
     );
   }
@@ -80,12 +118,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyListMessage: {
     fontWeight: 'bold',
     fontSize: 16,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   listItemContainer: {
     flex: 1,
@@ -102,4 +140,4 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 10,
   },
-})
+});

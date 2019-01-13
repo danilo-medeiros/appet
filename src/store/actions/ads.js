@@ -1,17 +1,16 @@
 import { SELECT_AD, DELETE_AD, DESELECT_AD, SET_ADS, SET_PROFILE_ADS } from "./actionTypes";
 import { uiStartLoading, uiStopLoading } from "./ui";
-import { getAds, saveAd, uploadImage, getAd } from "../../api";
+import { getAds, saveAd, uploadImage, getAd, updateAd as editAd } from "../../api";
 
 export const updateAd = (ad, image) => {
   return async (dispatch) => {
     dispatch(uiStartLoading());
     try {
-      await updateAd(ad);
-      console.log(ad);
+      await editAd(ad);
       if (image) {
         await uploadImage(ad.id, image);
       }
-      dispatch(uiStopLoading());
+      dispatch(fetchAd(ad.id));
       dispatch(fetchAds({currentPage: 1}));
     } catch (error) {
       console.error(error);
@@ -42,7 +41,7 @@ export const fetchAds = (options) => {
     dispatch(uiStartLoading());
     getAds(options)
       .then(res => {
-        dispatch(setAds(res.ads ? res.ads : [], res._pagination.current_page));
+        dispatch(setAds(res));
         dispatch(uiStopLoading());
       })
       .catch(error => {
@@ -56,9 +55,9 @@ export const fetchProfileAds = (options, user_id) => {
   const { currentPage } = options;
   return dispatch => {
     dispatch(uiStartLoading());
-    getAds({ currentPage, ransack: { user_id_eq: user_id } })
+    getAds({ currentPage, per_page, ransack: { user_id_eq: user_id } })
       .then(res => {
-        dispatch(setProfileAds(res.ads ? res.ads : [], res._pagination.current_page));
+        dispatch(setProfileAds(res));
         dispatch(uiStopLoading());
       })
       .catch(error => {
@@ -83,18 +82,16 @@ export const fetchAd = (id) => {
   };
 }
 
-export const setAds = (ads, currentPage) => {
+export const setAds = (ads) => {
   return {
     ads,
-    currentPage,
     type: SET_ADS,
   };
 };
 
-export const setProfileAds = (profileAds, currentPage) => {
+export const setProfileAds = (profileAds) => {
   return {
     profileAds,
-    currentPage,
     type: SET_PROFILE_ADS,
   };
 };

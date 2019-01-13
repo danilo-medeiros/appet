@@ -1,24 +1,24 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
   Image,
   StyleSheet,
   ScrollView,
-  ActivityIndicator
-} from "react-native";
-import Communications from "react-native-communications";
-import { connect } from "react-redux";
+  ActivityIndicator,
+} from 'react-native';
+import Communications from 'react-native-communications';
+import { connect } from 'react-redux';
 
-import { Button } from "../../widgets";
-import { fetchAd } from "../../../store/actions/ads";
-import { API_PATH } from "../../../constants";
+import { Button } from '../../widgets';
+import { fetchAd } from '../../../store/actions/ads';
+import { apiPath } from '../../../helpers';
 
 const PET_TYPES = {
-  dog: "Cachorro",
-  cat: "Gato",
-  bird: "Pássaro",
-  other: "Outros"
+  dog: 'Cachorro',
+  cat: 'Gato',
+  bird: 'Pássaro',
+  other: 'Outros',
 };
 
 const ageText = age => {
@@ -42,7 +42,7 @@ const ItemWrapper = props => {
 const Separator = () => <View style={styles.separator} />;
 
 const DetailsRow = props => (
-  <ItemWrapper style={{ flex: 1, flexDirection: "row" }}>
+  <ItemWrapper style={{ flex: 1, flexDirection: 'row' }}>
     <View style={{ flex: 1 }}>
       <Text style={styles.description}>{props.title}</Text>
     </View>
@@ -53,39 +53,37 @@ const DetailsRow = props => (
 );
 
 class AdDetails extends Component {
-
   constructor(props) {
     super(props);
-    const selectedAd = this.props.navigation.getParam("item");
-    this.props.fetchAd(selectedAd.id);
+    this.props.fetchAd(this.props.ad.id);
   }
 
   renderAproxAge(age) {
     if (age) {
-      return <DetailsRow title='Idade aprox.' value={ageText(age)} />;
+      return <DetailsRow title="Idade aprox." value={ageText(age)} />;
     }
     return <View />;
-  };
+  }
 
   renderWeight(weight) {
     if (weight) {
-      return <DetailsRow title='Peso' value={`${weight} kg`} />;
+      return <DetailsRow title="Peso" value={`${weight} kg`} />;
     }
     return <View />;
-  };
+  }
 
   renderImage() {
     if (this.props.ad.picture_url) {
       return (
         <Image
-          source={{ uri: `${API_PATH}${this.props.ad.picture_url}` }}
+          source={{ uri: `${apiPath()}${this.props.ad.picture_url}` }}
           style={styles.image}
         />
       );
     }
     return (
       <Image
-        source={require("../../../assets/picture.png")}
+        source={require('../../../assets/picture.png')}
         style={styles.image}
       />
     );
@@ -93,8 +91,8 @@ class AdDetails extends Component {
 
   renderLoading() {
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size='large' />
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -106,16 +104,14 @@ class AdDetails extends Component {
     ) {
       return (
         <Button
-          text='Editar'
-          onPress={() =>
-            this.props.navigation.navigate("EditAd", { image: this.image })
-          }
+          text="Editar"
+          onPress={() => this.props.navigation.navigate('EditAd')}
         />
       );
     }
     return (
       <Button
-        text='Ligar'
+        text="Ligar"
         onPress={() =>
           Communications.phonecall(this.props.ad.user.phone_number, true)
         }
@@ -124,11 +120,11 @@ class AdDetails extends Component {
   }
 
   render() {
-    const ad = this.props.ad;
-
-    if (this.props.isLoading || !ad) {
+    if (this.props.isLoading || !this.props.ad.user) {
       return this.renderLoading();
     }
+
+    const ad = this.props.ad;
 
     return (
       <View style={{ flex: 1 }}>
@@ -161,7 +157,7 @@ class AdDetails extends Component {
               <Text style={styles.sectionTitle}>Detalhes</Text>
             </ItemWrapper>
 
-            <DetailsRow title='Categoria' value={PET_TYPES[ad.pet_type]} />
+            <DetailsRow title="Categoria" value={PET_TYPES[ad.pet_type]} />
             {this.renderWeight(ad.aprox_age)}
             {this.renderAproxAge(ad.aprox_age)}
 
@@ -195,7 +191,7 @@ class AdDetails extends Component {
 
             <ItemWrapper>
               <Text style={styles.description}>
-                {ad.user.name.split(" ")[0]}
+                {ad.user.name.split(' ')[0]}
               </Text>
             </ItemWrapper>
           </View>
@@ -208,32 +204,32 @@ class AdDetails extends Component {
 
 const styles = StyleSheet.create({
   image: {
-    width: "100%",
-    height: 250
+    width: '100%',
+    height: 250,
   },
   mainView: {
     paddingHorizontal: 10,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   title: {
-    fontSize: 25
+    fontSize: 25,
   },
   datetime: {
-    color: "#000"
+    color: '#000',
   },
   separator: {
-    backgroundColor: "#CCC",
-    width: "100%",
+    backgroundColor: '#CCC',
+    width: '100%',
     height: 1,
-    marginVertical: 10
+    marginVertical: 10,
   },
   sectionTitle: {
-    fontWeight: "400",
-    fontSize: 18
+    fontWeight: '400',
+    fontSize: 18,
   },
   description: {
-    textAlign: "justify"
-  }
+    textAlign: 'justify',
+  },
 });
 
 const mapStateToProps = state => {
@@ -241,17 +237,17 @@ const mapStateToProps = state => {
     ad: state.ads.selectedAd,
     image: state.ads.selectedImage,
     isLoading: state.ui.isLoading,
-    currentUser: state.users.currentUser
+    currentUser: state.users.currentUser,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchAd: id => dispatch(fetchAd(id))
+    fetchAd: id => dispatch(fetchAd(id)),
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(AdDetails);

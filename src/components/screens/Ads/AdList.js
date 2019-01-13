@@ -3,21 +3,20 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Button, AdsList } from '../../widgets';
-import { fetchAds } from '../../../store/actions/ads';
+import { fetchAds, selectAd } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 import { getData } from '../../../helpers';
 
 class AdList extends Component {
-
   constructor(props) {
     super(props);
-    
+
     if (!this.props.currentUser) {
       this.getCurrentUser();
     }
 
-    if (this.props.ads.length === 0) {
-      this.props.fetchAds({currentPage: 1});
+    if (!this.props.ads.count) {
+      this.props.fetchAds({ currentPage: 1, per_page: this.props.ads.per_page });
     }
   }
 
@@ -29,7 +28,8 @@ class AdList extends Component {
   }
 
   onAdSelectedHandler(item) {
-    this.props.navigation.navigate('ShowAd', { item });
+    this.props.selectAd(item);
+    this.props.navigation.navigate('ShowAd');
   }
 
   navigateToAdForm() {
@@ -40,13 +40,20 @@ class AdList extends Component {
     }
   }
 
+  fetchMore() {
+    this.props.fetchAds({ currentPage: this.props.ads.current_page++, per_page: this.props.ads.per_page });
+  }
+
   renderList() {
-    if (this.props.isLoading) {
-      return (<View style={{flex: 1, justifyContent: 'center'}}><ActivityIndicator size='large'></ActivityIndicator></View>);
-    }
-    return (<AdsList ads={this.props.ads}
-      onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)}
-    />);
+    console.log(this.props.ads.records);
+    return (
+      <AdsList
+        ads={this.props.ads}
+        isLoading={this.props.isLoading}
+        fetchMore={ () => this.fetchMore() }
+        onAdSelectedHandler={item => this.onAdSelectedHandler(item)}
+      />
+    );
   }
 
   render() {
@@ -54,7 +61,7 @@ class AdList extends Component {
       <View style={styles.container}>
         {this.renderList()}
         <Button
-          text='Cadastrar anúncio'
+          text="Cadastrar anúncio"
           onPress={() => this.navigateToAdForm()}
         />
       </View>
@@ -78,9 +85,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchAds: (options) => dispatch(fetchAds(options)),
+    selectAd: item => dispatch(selectAd(item)),
+    fetchAds: options => dispatch(fetchAds(options)),
     getCurrentUser: () => dispatch(getCurrentUser()),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AdList);

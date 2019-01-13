@@ -13,7 +13,8 @@ const ransackParams = (params) => {
 }
 
 const getAds = async (options) => {
-  const src = `${apiPath()}ads?page=${options.currentPage}${ransackParams(options.ransack)}`;
+  console.log(options);
+  const src = `${apiPath()}/ads?page=${options.currentPage}${ransackParams(options.ransack)}&per_page=${options.per_page}`;
 
   const response = await fetch(src, {
     headers: {
@@ -28,7 +29,7 @@ const getAds = async (options) => {
 };
 
 const getAd = async (id) => {
-  const response = await fetch(`${apiPath()}ads/${id}`, {
+  const response = await fetch(`${apiPath()}/ads/${id}`, {
     headers: {
       'Accept': 'application/json',
     }
@@ -49,7 +50,7 @@ const uploadImage = async (adId, image) => {
     name: image.name,
   });
 
-  const response = await fetch(`${apiPath()}ads/${adId}/picture`, {
+  const response = await fetch(`${apiPath()}/ads/${adId}/picture`, {
     method: 'POST',
     headers: {
       'Authorization': authToken,
@@ -66,7 +67,7 @@ const uploadImage = async (adId, image) => {
 
 const saveAd = async (ad) => {
   const authToken = await getData('token');
-  const response = await fetch(`${apiPath()}ads`, {
+  const response = await fetch(`${apiPath()}/ads`, {
     method: 'POST',
     body: JSON.stringify(ad),
     headers: {
@@ -83,7 +84,7 @@ const saveAd = async (ad) => {
 
 const updateAd = async (ad) => {
   const authToken = await getData('token');
-  const response = await fetch(`${apiPath()}ads/${ad.id}`, {
+  const response = await fetch(`${apiPath()}/ads/${ad.id}`, {
     method: 'PUT',
     body: JSON.stringify(ad),
     headers: {
@@ -92,8 +93,8 @@ const updateAd = async (ad) => {
       'Authorization': authToken,
     },
   });
-  if (response.status !== 201) {
-    throw new Error('Não foi possível inserir o anúncio');
+  if (response.status !== 200) {
+    throw new Error('Não foi possível atualizar o anúncio');
   }
   return await response.json();
 }

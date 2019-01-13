@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { AdsList } from '../../widgets';
-import { fetchProfileAds } from '../../../store/actions/ads';
+import { fetchProfileAds, selectAd } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 
 class ProfileAdList extends Component {
@@ -17,7 +17,8 @@ class ProfileAdList extends Component {
   }
 
   onAdSelectedHandler(item) {
-    this.props.navigation.navigate('ShowProfileAd', { item });
+    this.props.selectAd(item);
+    this.props.navigation.navigate('ShowProfileAd');
   }
 
   renderList() {
@@ -54,6 +55,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    selectAd: (item) => dispatch(selectAd(item)),
     fetchAds: (options, userId) => dispatch(fetchProfileAds(options, userId)),
     getCurrentUser: () => dispatch(getCurrentUser()),
   };
