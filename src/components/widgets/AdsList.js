@@ -14,6 +14,10 @@ import COLORS from '../../theme/Colors';
 import { API_PATH } from '../../constants';
 
 export default class AdsList extends Component {
+  state = {
+    refreshing: false,
+  };
+
   constructor(props) {
     super(props);
   }
@@ -37,10 +41,14 @@ export default class AdsList extends Component {
     );
   }
 
+  selectItem(item) {
+    this.props.onAdSelectedHandler(item);
+  }
+
   renderItem = ad => {
     return (
       <TouchableHighlight
-        onPress={() => this.props.onAdSelectedHandler(ad)}
+        onPress={() => this.selectItem(ad)}
         underlayColor={COLORS[4]}>
         <View style={styles.listItemContainer}>
           {this.renderImage(ad)}
@@ -75,12 +83,33 @@ export default class AdsList extends Component {
         </View>
       );
     }
-    return null;
+    return (
+      <View
+        style={{
+          paddingVertical: 10,
+        }}>
+        <Text style={styles.endOfList}>Não há mais itens</Text>
+      </View>
+    );
   }
 
   onEndReached() {
-    if (!this.props.isLoading) {
+    if (!this.props.isLoading && this.props.ads.canLoadMore) {
       this.props.fetchMore();
+    }
+  }
+
+  async onRefresh() {
+    this.setState({
+      ...this.state,
+      refreshing: true,
+    });
+    if (!this.props.isLoading) {
+      await this.props.onRefresh();
+      this.setState({
+        ...this.state,
+        refreshing: false,
+      });
     }
   }
 
@@ -102,7 +131,8 @@ export default class AdsList extends Component {
         renderItem={({ item: ad }) => this.renderItem(ad)}
         ListFooterComponent={() => this.renderFooter()}
         onEndReached={() => this.onEndReached()}
-        onEndReachedThreshold={1}
+        onRefresh={() => this.onRefresh()}
+        refreshing={this.state.refreshing}
       />
     );
   }
@@ -139,5 +169,8 @@ const styles = StyleSheet.create({
   listItemDataContainer: {
     alignItems: 'flex-start',
     paddingHorizontal: 10,
+  },
+  endOfList: {
+    textAlign: 'center',
   },
 });

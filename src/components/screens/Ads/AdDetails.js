@@ -55,7 +55,6 @@ const DetailsRow = props => (
 class AdDetails extends Component {
   constructor(props) {
     super(props);
-    this.props.fetchAd(this.props.ad.id);
   }
 
   renderAproxAge(age) {
@@ -120,11 +119,13 @@ class AdDetails extends Component {
   }
 
   render() {
-    if (this.props.isLoading || !this.props.ad.user) {
+    if (this.props.isLoading || !this.props.ad) {
       return this.renderLoading();
     }
 
     const ad = this.props.ad;
+
+    console.log(ad);
 
     return (
       <View style={{ flex: 1 }}>

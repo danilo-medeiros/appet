@@ -7,12 +7,11 @@ import { fetchProfileAds, selectAd } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 
 class ProfileAdList extends Component {
-
   constructor(props) {
     super(props);
 
     if (this.props.currentUser) {
-      this.props.fetchAds({currentPage: 1}, this.props.currentUser.id);
+      this.props.fetchAds({ ransack: { user_id: this.props.currentUser.id } });
     }
   }
 
@@ -23,19 +22,22 @@ class ProfileAdList extends Component {
 
   renderList() {
     if (this.props.isLoading) {
-      return (<View style={{flex: 1, justifyContent: 'center'}}><ActivityIndicator size='large'></ActivityIndicator></View>);
+      return (
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size="large" />
+        </View>
+      );
     }
-    return (<AdsList ads={this.props.profileAds}
-      onAdSelectedHandler={(item) => this.onAdSelectedHandler(item)}
-    />);
+    return (
+      <AdsList
+        ads={this.props.profileAds}
+        onAdSelectedHandler={item => this.onAdSelectedHandler(item)}
+      />
+    );
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        {this.renderList()}
-      </View>
-    );
+    return <View style={styles.container}>{this.renderList()}</View>;
   }
 }
 
@@ -55,10 +57,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectAd: (item) => dispatch(selectAd(item)),
-    fetchAds: (options, userId) => dispatch(fetchProfileAds(options, userId)),
+    selectAd: item => dispatch(selectAd(item)),
+    fetchAds: (options) => dispatch(fetchProfileAds(options)),
     getCurrentUser: () => dispatch(getCurrentUser()),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileAdList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ProfileAdList);

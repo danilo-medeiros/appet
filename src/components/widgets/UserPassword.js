@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import t from 'tcomb-form-native';
+import { connect } from 'react-redux';
 
 import { MANDATORY_FIELD_MESSAGE } from '../../constants';
 
@@ -17,22 +18,21 @@ const options = {
       label: 'Senha',
       error: MANDATORY_FIELD_MESSAGE,
       maxLength: 12,
-      secureTextEntry: true
+      secureTextEntry: true,
     },
     password_confirmation: {
       label: 'Confirme a senha',
       error: MANDATORY_FIELD_MESSAGE,
       maxLength: 12,
-      secureTextEntry: true
+      secureTextEntry: true,
     },
   },
 };
 
 class UserPassword extends Component {
-
   state = {
     password: null,
-  }
+  };
 
   handleSubmit() {
     const value = this._form.getValue();
@@ -49,22 +49,32 @@ class UserPassword extends Component {
     this.props.onSubmit(value);
   }
 
+  renderButton() {
+    if (this.props.isLoading) {
+      return <Button text="Carregando..." onPress={() => {}} />;
+    }
+    return (
+      <Button
+        text={this.props.isEditionMode ? 'Atualizar senha' : 'Cadastrar-se'}
+        onPress={() => this.handleSubmit()}
+      />
+    );
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
           <View style={styles.form}>
-            <Form ref={c => this._form = c}
+            <Form
+              ref={c => (this._form = c)}
               type={Password}
               value={this.state.password}
               options={options}
             />
           </View>
         </ScrollView>
-        <Button
-          text={this.props.isEditionMode ? 'Atualizar senha' : 'Cadastrar-se'}
-          onPress={() => this.handleSubmit()}
-        />
+        {this.renderButton()}
       </View>
     );
   }
@@ -77,7 +87,16 @@ const styles = StyleSheet.create({
   },
   form: {
     marginBottom: 30,
-  }
+  },
 });
 
-export default UserPassword;
+const mapStateToProps = state => ({
+  isLoading: state.ui.isLoading,
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(UserPassword);

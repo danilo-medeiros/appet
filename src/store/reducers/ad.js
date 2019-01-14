@@ -1,4 +1,9 @@
-import { SET_ADS, SELECT_AD, SET_PROFILE_ADS } from '../actions/actionTypes';
+import {
+  SET_ADS,
+  SELECT_AD,
+  SET_PROFILE_ADS,
+  DESELECT_AD,
+} from '../actions/actionTypes';
 
 const initialState = {
   ads: {
@@ -21,19 +26,21 @@ const initialState = {
 const adsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_ADS:
+      const total =
+        action.ads._pagination.current_page === 1
+          ? action.ads.records.length
+          : state.ads.records.length + action.ads.records.length;
+
       return {
         ...state,
         ads: {
           ...state.ads,
+          ...action.ads._pagination,
           records:
-            action.current_page === 1
-              ? action.ads
-              : action.ads.records.concat(state.ads.records),
-          count: action.ads._pagination.count,
-          current_page: action.ads._pagination.current_page,
-          canLoadMore:
-            action.ads._pagination.count >
-            state.ads.perPage * action.ads._pagination.current_page,
+            action.ads._pagination.current_page === 1
+              ? action.ads.records
+              : state.ads.records.concat(action.ads.records),
+          canLoadMore: total < action.ads._pagination.count,
         },
       };
     case SELECT_AD:
@@ -41,20 +48,25 @@ const adsReducer = (state = initialState, action) => {
         ...state,
         selectedAd: action.ad,
       };
+    case DESELECT_AD:
+      return {
+        ...state,
+        selectedAd: null,
+      };
     case SET_PROFILE_ADS:
       return {
         ...state,
         profileAds: {
           ...state.profileAds,
+          ...action.profileAds._pagination,
           records:
-            action.current_page === 1
-              ? action.profileAds
+            action.profileAds._pagination.current_page === 1
+              ? action.profileAds.records
               : action.profileAds.records.concat(state.profileAds.records),
-          count: action.profileAds.count,
-          current_page: action.profileAds.current_page,
           canLoadMore:
-            action.ads._pagination.count >
-            state.ads.perPage * action.ads._pagination.current_page,
+            action.profileAds._pagination.count >
+            state.profileAds.per_page *
+              action.profileAds._pagination.current_page,
         },
       };
     default:
