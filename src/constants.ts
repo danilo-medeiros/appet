@@ -1,4 +1,3 @@
-export const API_PATH = "http://10.0.0.104:3000/";
 export const CEP_PATH = "https://viacep.com.br/ws/";
 export const UFS = {
   AC: "Acre",

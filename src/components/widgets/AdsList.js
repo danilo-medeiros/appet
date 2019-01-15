@@ -11,8 +11,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import COLORS from '../../theme/Colors';
-import { API_PATH } from '../../constants';
 import { parseDate } from '../../helpers/parseDate';
+import { apiPath } from '../../helpers';
 
 export default class AdsList extends Component {
   state = {
@@ -36,7 +36,7 @@ export default class AdsList extends Component {
     }
     return (
       <Image
-        source={{ uri: `${API_PATH}${ad.picture_url}` }}
+        source={{ uri: `${apiPath()}${ad.picture_url}` }}
         style={styles.listItemImage}
       />
     );
