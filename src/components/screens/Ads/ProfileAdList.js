@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 
 import { AdsList } from '../../widgets';
-import { fetchProfileAds, selectAd } from '../../../store/actions/ads';
+import { fetchProfileAds, selectAd, fetchAd } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 
 class ProfileAdList extends Component {
@@ -16,7 +16,7 @@ class ProfileAdList extends Component {
   }
 
   onAdSelectedHandler(item) {
-    this.props.selectAd(item);
+    this.props.fetchAd(item.id);
     this.props.navigation.navigate('ShowProfileAd');
   }
 
@@ -37,7 +37,15 @@ class ProfileAdList extends Component {
   }
 
   render() {
-    return <View style={styles.container}>{this.renderList()}</View>;
+    return (
+      <View style={styles.container}>
+        {this.renderList()}
+        <Button
+          text="Cadastrar anúncio"
+          onPress={() => this.props.navigation.navigate('NewAd')}
+        />
+      </View>
+    );
   }
 }
 
@@ -57,8 +65,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    selectAd: item => dispatch(selectAd(item)),
-    fetchAds: (options) => dispatch(fetchProfileAds(options)),
+    fetchAd: id => dispatch(fetchAd(id)),
+    fetchAds: options => dispatch(fetchProfileAds(options)),
     getCurrentUser: () => dispatch(getCurrentUser()),
   };
 };

@@ -68,7 +68,7 @@ export const fetchProfileAds = (options) => {
     dispatch(uiStartLoading());
     try {
       const res = await getAds(options);
-      dispatch(setAds(res));
+      dispatch(setProfileAds(res));
       dispatch(uiStopLoading());
     } catch (error) {
       console.error(error);

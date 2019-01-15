@@ -28,6 +28,19 @@ const register = async function(token) {
   return await response.json();
 }
 
+const refresh = async function(token) {
+  const response = await fetch(`${apiPath()}/auth/refresh`, {
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': token,
+    },
+  });
+  if (response.status === 401) {
+    throw new Error('Você não está autenticado.');
+  }
+  return await response.json();
+}
+
 const signUp = async function(user) {
   const response = await fetch(`${apiPath()}/signup`, {
     method: 'POST',
@@ -60,4 +73,4 @@ const updateUser = async function(user) {
   return await response.json();
 };
 
-export { register, sendCredentials, signUp, updateUser };
+export { register, sendCredentials, signUp, updateUser, refresh };

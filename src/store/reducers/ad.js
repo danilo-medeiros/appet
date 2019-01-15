@@ -26,7 +26,7 @@ const initialState = {
 const adsReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_ADS:
-      const total =
+      const totalAds =
         action.ads._pagination.current_page === 1
           ? action.ads.records.length
           : state.ads.records.length + action.ads.records.length;
@@ -40,7 +40,7 @@ const adsReducer = (state = initialState, action) => {
             action.ads._pagination.current_page === 1
               ? action.ads.records
               : state.ads.records.concat(action.ads.records),
-          canLoadMore: total < action.ads._pagination.count,
+          canLoadMore: totalAds < action.ads._pagination.count,
         },
       };
     case SELECT_AD:
@@ -54,6 +54,11 @@ const adsReducer = (state = initialState, action) => {
         selectedAd: null,
       };
     case SET_PROFILE_ADS:
+      const totalProfileAds =
+        action.profileAds._pagination.current_page === 1
+          ? action.profileAds.records.length
+          : state.profileAds.records.length + action.profileAds.records.length;
+
       return {
         ...state,
         profileAds: {
@@ -62,11 +67,8 @@ const adsReducer = (state = initialState, action) => {
           records:
             action.profileAds._pagination.current_page === 1
               ? action.profileAds.records
-              : action.profileAds.records.concat(state.profileAds.records),
-          canLoadMore:
-            action.profileAds._pagination.count >
-            state.profileAds.per_page *
-              action.profileAds._pagination.current_page,
+              : state.profileAds.records.concat(action.profileAds.records),
+          canLoadMore: totalProfileAds < action.profileAds._pagination.count,
         },
       };
     default:

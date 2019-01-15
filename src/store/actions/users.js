@@ -3,24 +3,24 @@ import {
   UNSET_CURRENT_USER,
   UPDATE_CURRENT_USER,
 } from './actionTypes';
-import { sendCredentials, register, signUp, updateUser } from '../../api';
+import { sendCredentials, register, signUp, updateUser, refresh } from '../../api';
 import { uiStartLoading, uiStopLoading } from './ui';
 import { storeData, getData, removeData } from '../../helpers/Storage';
 
 export const login = credentials => {
-  return dispatch => {
+  return async dispatch => {
     dispatch(uiStartLoading());
-    sendCredentials(credentials)
-      .then(authResponse => storeData('token', authResponse.token))
-      .then(token => register(token))
-      .then(registerResponse => {
-        dispatch(uiStopLoading());
-        dispatch(setCurrentUser(registerResponse));
-      })
-      .catch(error => {
-        alert(error.message);
-        dispatch(uiStopLoading());
-      });
+    try {
+      const authResponse = await sendCredentials(credentials);
+      await storeData('token', authResponse.token);
+      const registerResponse = await register(authResponse.token);
+      dispatch(uiStopLoading());
+      dispatch(setCurrentUser(registerResponse));
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+      dispatch(uiStopLoading());
+    }
   };
 };
 
@@ -64,6 +64,20 @@ export const getCurrentUser = () => {
     }
   };
 };
+
+export const refreshRegister = () => {
+  return async dispatch => {
+    try {
+      const token = await getData('token');
+      const newToken = await refresh(token).token;
+      await storeData('token', newToken);
+      const registeredUser = await register(newToken);
+      dispatch(setCurrentUser(registeredUser));
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+}
 
 const setCurrentUser = currentUser => {
   return {

@@ -6,6 +6,8 @@ import { Button, AdsList } from '../../widgets';
 import { fetchAds, fetchAd } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 import { getData } from '../../../helpers';
+import jwtDecode from 'jwt-decode';
+import { refreshRegister } from '../../../store/actions/users';
 
 class AdList extends Component {
   constructor(props) {
@@ -22,9 +24,18 @@ class AdList extends Component {
 
   async getCurrentUser() {
     const token = await getData('token');
+
     if (token) {
-      this.props.getCurrentUser();
+      if (this.isValidToken(token)) {
+        this.props.getCurrentUser();
+      } else {
+        this.props.refreshRegister();
+      }
     }
+  }
+
+  isValidToken(token) {
+    return jwtDecode(token).exp > new Date().getTime();
   }
 
   onAdSelectedHandler(item) {
@@ -94,6 +105,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchAd: id => dispatch(fetchAd(id)),
     fetchAds: options => dispatch(fetchAds(options)),
+    refreshRegister: () => dispatch(refreshRegister()),
     getCurrentUser: () => dispatch(getCurrentUser()),
   };
 };

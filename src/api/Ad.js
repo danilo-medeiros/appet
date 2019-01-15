@@ -23,7 +23,7 @@ const ransackParams = params => {
     return '';
   }
   return Object.keys(params)
-    .map(key => `q[${key}]=${params[key]}`)
+    .map(key => `q[${key}_eq]=${params[key]}`)
     .join('&');
 };
 

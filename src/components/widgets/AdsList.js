@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import COLORS from '../../theme/Colors';
 import { API_PATH } from '../../constants';
+import { parseDate } from '../../helpers/parseDate';
 
 export default class AdsList extends Component {
   state = {
@@ -58,7 +59,7 @@ export default class AdsList extends Component {
               {ad.city}, {ad.state}
             </Text>
             <Text style={{ fontSize: 14, color: 'gray' }}>
-              {new Date(ad.created_at).toLocaleDateString()}
+              {parseDate(ad.created_at)}
             </Text>
           </View>
         </View>

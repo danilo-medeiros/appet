@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { Button } from '../../widgets';
 import { fetchAd } from '../../../store/actions/ads';
 import { apiPath } from '../../../helpers';
+import { parseDate } from '../../../helpers/parseDate';
 
 const PET_TYPES = {
   dog: 'Cachorro',
@@ -26,7 +27,7 @@ const ageText = age => {
     return `${age / 12} anos`;
   }
   if (age === 12) {
-    return `${age} ano`;
+    return `1 ano`;
   }
   if (age < 12) {
     return `${age} meses`;
@@ -138,7 +139,7 @@ class AdDetails extends Component {
 
             <ItemWrapper>
               <Text style={styles.datetime}>
-                Publicado em {new Date(ad.created_at).toLocaleDateString()}
+                Publicado em {parseDate(ad.created_at)}
               </Text>
             </ItemWrapper>
 
