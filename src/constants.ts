@@ -29,4 +29,19 @@ export const UFS = {
   TO: "Tocantins"
 };
 
+export const PET_TYPES = {
+  dog: 'Cachorro',
+  cat: 'Gato',
+  bird: 'Pássaro',
+  fish: 'Peixe',
+  others: 'Outros',
+};
+
+export const SIZE_TYPES = {
+  p: 'P',
+  m: 'M',
+  g: 'G',
+  gg: 'GG',
+};
+
 export const MANDATORY_FIELD_MESSAGE = "Campo obrigatório";

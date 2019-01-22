@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Modal } from 'react-native';
 import { connect } from 'react-redux';
 import SplashScreen from 'react-native-splash-screen';
 
-import { Button, AdsList } from '../../widgets';
-import { fetchAds, fetchAd } from '../../../store/actions/ads';
+import { Button, AdsList, SearchHeader } from '../../widgets';
+import { fetchAds, fetchAd, setFilter } from '../../../store/actions/ads';
 import { getCurrentUser } from '../../../store/actions';
 import { getData } from '../../../helpers';
 import jwtDecode from 'jwt-decode';
@@ -15,27 +15,42 @@ class AdList extends Component {
     super(props);
 
     if (!this.props.currentUser) {
-      this.getCurrentUser();
-    }
-
-    if (!this.props.ads.count) {
-      this.props.fetchAds();
+      this.loadData();
+    } else {
+      this.props.fetchAds({ filter: this.props.filter });
     }
   }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: SearchHeader({
+        onSearchPressed: () => {},
+        onFilterPressed: () => navigation.navigate('AdListFilter'),
+      }),
+    };
+  };
 
   componentDidMount() {
     SplashScreen.hide();
   }
 
-  async getCurrentUser() {
+  async loadData() {
     const token = await getData('token');
+    let filter = this.props.filter;
 
     if (token) {
+      let user;
       if (this.isValidToken(token)) {
-        this.props.getCurrentUser();
+        user = await this.props.getCurrentUser();
       } else {
-        this.props.refreshRegister();
+        user = await this.props.refreshRegister();
       }
+      filter = { ...this.props.filter, state: user.state };
+      this.props.setFilter(filter);
+    }
+
+    if (!this.props.ads.count) {
+      this.props.fetchAds({ filter });
     }
   }
 
@@ -103,6 +118,7 @@ const mapStateToProps = state => {
     ads: state.ads.ads,
     currentUser: state.users.currentUser,
     isLoading: state.ui.isLoading,
+    filter: state.ads.filter,
   };
 };
 
@@ -112,6 +128,7 @@ const mapDispatchToProps = dispatch => {
     fetchAds: options => dispatch(fetchAds(options)),
     refreshRegister: () => dispatch(refreshRegister()),
     getCurrentUser: () => dispatch(getCurrentUser()),
+    setFilter: filter => dispatch(setFilter(filter)),
   };
 };
 

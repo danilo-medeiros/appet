@@ -3,9 +3,14 @@ import {
   SELECT_AD,
   SET_PROFILE_ADS,
   DESELECT_AD,
+  SET_AD_FILTER,
 } from '../actions/actionTypes';
 
 const initialState = {
+  filter: {
+    order_by: 'created_at',
+    asc: false,
+  },
   ads: {
     records: [],
     count: 0,
@@ -69,6 +74,14 @@ const adsReducer = (state = initialState, action) => {
               ? action.profileAds.records
               : state.profileAds.records.concat(action.profileAds.records),
           canLoadMore: totalProfileAds < action.profileAds._pagination.count,
+        },
+      };
+    case SET_AD_FILTER:
+      return {
+        ...state,
+        filter: {
+          ...state.filter,
+          ...action.filter,
         },
       };
     default:

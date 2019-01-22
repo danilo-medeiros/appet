@@ -4,6 +4,7 @@ import {
   DESELECT_AD,
   SET_ADS,
   SET_PROFILE_ADS,
+  SET_AD_FILTER,
 } from './actionTypes';
 import { uiStartLoading, uiStopLoading } from './ui';
 import {
@@ -63,7 +64,7 @@ export const fetchAds = options => {
   };
 };
 
-export const fetchProfileAds = (options) => {
+export const fetchProfileAds = options => {
   return async dispatch => {
     dispatch(uiStartLoading());
     try {
@@ -121,10 +122,15 @@ export const deselectAd = () => {
   };
 };
 
+export const setFilter = filter => {
+  return {
+    filter,
+    type: SET_AD_FILTER,
+  };
+};
+
 const deleteAd = () => {
   return {
     type: DELETE_AD,
   };
 };
-
-export { deleteAd };

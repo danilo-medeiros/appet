@@ -17,7 +17,6 @@ export const login = credentials => {
       dispatch(uiStopLoading());
       dispatch(setCurrentUser(registerResponse));
     } catch (error) {
-      console.error(error);
       alert(error.message);
       dispatch(uiStopLoading());
     }
@@ -59,6 +58,7 @@ export const getCurrentUser = () => {
       const token = await getData('token');
       const registeredUser = await register(token);
       dispatch(setCurrentUser(registeredUser));
+      return registeredUser;
     } catch (error) {
       alert(error.message);
     }
@@ -73,6 +73,7 @@ export const refreshRegister = () => {
       await storeData('token', newToken);
       const registeredUser = await register(newToken);
       dispatch(setCurrentUser(registeredUser));
+      return registeredUser;
     } catch (error) {
       alert(error.message);
     }

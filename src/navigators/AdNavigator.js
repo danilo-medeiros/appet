@@ -1,7 +1,7 @@
 import { createStackNavigator } from 'react-navigation';
 
 import { MainDrawerIcon } from '../components/widgets';
-import { AdList, NewAd, AdDetails, EditAd } from '../components/screens/Ads';
+import { AdList, NewAd, AdDetails, EditAd, AdListFilter } from '../components/screens/Ads';
 import COLORS from "../theme/Colors";
 
 const AdNavigator = createStackNavigator(
@@ -31,6 +31,12 @@ const AdNavigator = createStackNavigator(
         title: 'Detalhes do anúncio',
       },
     },
+    AdListFilter: {
+      screen: AdListFilter,
+      navigationOptions: {
+        title: 'Filtrar anúncios',
+      },
+    }
   },
   {
     initialRouteName: 'ListAds',

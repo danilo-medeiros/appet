@@ -4,30 +4,18 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
 import { Button, PickImage } from './';
-import { UFS, MANDATORY_FIELD_MESSAGE } from '../../constants';
+import {
+  UFS,
+  MANDATORY_FIELD_MESSAGE,
+  PET_TYPES,
+  SIZE_TYPES,
+} from '../../constants';
 
 const Form = t.form.Form;
 
-const PetType = t.enums(
-  {
-    dog: 'Cachorro',
-    cat: 'Gato',
-    bird: 'Pássaro',
-    fish: 'Peixe',
-    others: 'Outros',
-  },
-  'PetType',
-);
+const PetType = t.enums(PET_TYPES, 'PetType');
 
-const SizeType = t.enums(
-  {
-    p: 'P',
-    m: 'M',
-    g: 'G',
-    gg: 'GG',
-  },
-  'SizeType',
-);
+const SizeType = t.enums(SIZE_TYPES, 'SizeType');
 
 const Uf = t.enums(UFS, 'Uf');
 
