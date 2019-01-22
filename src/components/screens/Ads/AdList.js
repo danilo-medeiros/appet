@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import SplashScreen from 'react-native-splash-screen';
 
 import { Button, AdsList } from '../../widgets';
 import { fetchAds, fetchAd } from '../../../store/actions/ads';
@@ -20,6 +21,10 @@ class AdList extends Component {
     if (!this.props.ads.count) {
       this.props.fetchAds();
     }
+  }
+
+  componentDidMount() {
+    SplashScreen.hide();
   }
 
   async getCurrentUser() {
