@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Modal } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -50,7 +50,7 @@ class AdList extends Component {
     }
 
     if (!this.props.ads.count) {
-      this.props.fetchAds({ filter });
+      this.props.fetchAds(filter);
     }
   }
 
@@ -72,13 +72,14 @@ class AdList extends Component {
   }
 
   async onRefresh() {
-    await this.props.fetchAds();
+    await this.props.fetchAds({ ...this.props.filter });
   }
 
   fetchMore() {
     this.props.fetchAds({
       page: ++this.props.ads.current_page,
       per_page: this.props.ads.per_page,
+      ...this.props.filter,
     });
   }
 

@@ -11,7 +11,7 @@ class ProfileAdList extends Component {
     super(props);
 
     if (this.props.currentUser) {
-      this.props.fetchAds({ ransack: { user_id: this.props.currentUser.id } });
+      this.props.fetchAds({ user_id: this.props.currentUser.id });
     }
   }
 
@@ -20,18 +20,26 @@ class ProfileAdList extends Component {
     this.props.navigation.navigate('ShowProfileAd');
   }
 
+  async onRefresh() {
+    this.props.fetchAds({ user_id: this.props.currentUser.id });
+  }
+
+  fetchMore() {
+    this.props.fetchAds({
+      page: ++this.props.profileAds.current_page,
+      per_page: this.props.profileAds.per_page,
+      user_id: this.props.currentUser.id,
+    });
+  }
+
   renderList() {
-    if (this.props.isLoading) {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <ActivityIndicator size="large" />
-        </View>
-      );
-    }
     return (
       <AdsList
+        idLoading={this.props.isLoading}
         ads={this.props.profileAds}
         onAdSelectedHandler={item => this.onAdSelectedHandler(item)}
+        fetchMore={() => this.fetchMore()}
+        onRefresh={() => this.onRefresh()}
       />
     );
   }

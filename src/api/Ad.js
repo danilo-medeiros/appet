@@ -4,6 +4,8 @@ import { apiPath } from '../helpers';
 const DEFAULT_PAGE = 1;
 const DEFAULT_PER_PAGE = 10;
 
+const defaultRansackParams = ['size', 'state', 'pet_type'];
+
 const checkOptions = options => {
   return {
     ...options,
@@ -14,7 +16,13 @@ const checkOptions = options => {
 
 const optionsToQuery = options => {
   return Object.keys(options)
-    .map(key => `${key}=${options[key]}`)
+    .filter(key => !defaultRansackParams.includes(key))
+    .map(key => {
+      if (options[key] instanceof Object) {
+        return optionsToQuery(options[key]);
+      }
+      return `${key}=${options[key]}`;
+    })
     .join('&');
 };
 
@@ -23,14 +31,27 @@ const ransackParams = params => {
     return '';
   }
   return Object.keys(params)
+    .filter(key => defaultRansackParams.includes(key))
     .map(key => `q[${key}_eq]=${params[key]}`)
     .join('&');
 };
 
+const removeNull = params => {
+  if (!params) {
+    return {};
+  }
+  return Object.assign(
+    {},
+    ...Object.keys(params)
+      .filter(key => params[key])
+      .map(key => ({ [key]: params[key] })),
+  );
+};
+
 const buildUrl = (path, options) => {
-  const { ransack, ...otherParams } = options;
-  const optionsQuery = optionsToQuery(checkOptions(otherParams));
-  const ransackQuery = ransackParams(ransack);
+  const params = removeNull(options);
+  const optionsQuery = optionsToQuery(checkOptions(params));
+  const ransackQuery = ransackParams(params);
   return `${path}?${optionsQuery}&${ransackQuery}`;
 };
 

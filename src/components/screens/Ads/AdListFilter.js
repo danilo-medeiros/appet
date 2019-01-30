@@ -58,6 +58,7 @@ class AdListFilter extends Component {
       filter: {
         size: this.props.filter.size,
         state: this.props.filter.state,
+        pet_type: this.props.filter.pet_type,
         order: `${this.props.filter.order_by}__${this.props.filter.asc}`,
       },
     };
@@ -70,10 +71,11 @@ class AdListFilter extends Component {
       order_by: order[0],
       asc: order[1] === 'true',
       size: value.size,
+      pet_type: value.pet_type,
       state: value.state,
     };
     this.props.setFilter(filter);
-    this.props.fetchAds({ filter: filter });
+    this.props.fetchAds(filter);
     this.props.navigation.goBack();
   }
 

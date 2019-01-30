@@ -14,6 +14,7 @@ import {
   getAd,
   updateAd as editAd,
 } from '../../api';
+import { showSnackbar } from '../../helpers';
 
 export const updateAd = (ad, image) => {
   return async dispatch => {
@@ -26,8 +27,7 @@ export const updateAd = (ad, image) => {
       dispatch(fetchAd(ad.id));
       dispatch(fetchAds({ current_page: 1 }));
     } catch (error) {
-      console.error(error);
-      alert(error.message);
+      console.log(error);
       dispatch(uiStopLoading());
     }
   };
@@ -55,12 +55,11 @@ export const fetchAds = options => {
     try {
       const res = await getAds(options);
       dispatch(setAds(res));
-      dispatch(uiStopLoading());
     } catch (error) {
-      console.error(error);
-      alert(error.message);
-      dispatch(uiStopLoading());
+      console.log(error);
+      showSnackbar(error.message);
     }
+    dispatch(uiStopLoading());
   };
 };
 
@@ -72,8 +71,7 @@ export const fetchProfileAds = options => {
       dispatch(setProfileAds(res));
       dispatch(uiStopLoading());
     } catch (error) {
-      console.error(error);
-      alert(error.message);
+      console.log(error);
       dispatch(uiStopLoading());
     }
   };
@@ -88,9 +86,8 @@ export const fetchAd = id => {
       dispatch(selectAd(ad));
       dispatch(uiStopLoading());
     } catch (error) {
-      console.error(error);
-      alert(error.message);
-      dispatch(uiStopLoading());
+      console.log(error);
+      dispatch(uiStopLoading())  ;
     }
   };
 };
